@@ -108,13 +108,13 @@ function addAliasColumn
 function aliasTablesColumn
 [SqliteTable] ::= tables::[SqliteTable] n::Name a::Name mTableName::Maybe<Name>
 {
-  local attribute nextTable :: SqliteTable = head(tables);
-  local attribute doAliasNextTable :: Boolean =
+  local nextTable :: SqliteTable = head(tables);
+  local doAliasNextTable :: Boolean =
     case mTableName of
       just(tableName) -> nextTable.tableName.name == tableName.name
     | nothing()       -> true
     end;
-  local attribute nextTableAliased :: SqliteTable =
+  local nextTableAliased :: SqliteTable =
     if doAliasNextTable
     then aliasTableColumn(nextTable, n, a)
     else nextTable;
@@ -139,7 +139,7 @@ SqliteTable ::= table::SqliteTable n::Name a::Name
 function findColumn
 Maybe<SqliteColumn> ::= colName::Name columns::[SqliteColumn]
 {
-  local attribute col :: SqliteColumn = head(columns);
+  local col :: SqliteColumn = head(columns);
   return if null(columns) then nothing()
          else if colName.name == col.columnName.name
               then just(col)
@@ -149,7 +149,7 @@ Maybe<SqliteColumn> ::= colName::Name columns::[SqliteColumn]
 function addColumnToTable
 SqliteTable ::= table::SqliteTable n::Name t::SqliteColumnType
 {
-  local attribute newColumn :: SqliteColumn = sqliteColumn(n, t);
+  local newColumn :: SqliteColumn = sqliteColumn(n, t);
   return sqliteTable(table.tableName, sqliteColumnList(cons(newColumn, table.columns)));
 }
 

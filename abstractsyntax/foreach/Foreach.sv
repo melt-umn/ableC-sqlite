@@ -153,14 +153,14 @@ StructItemList ::= columns::[SqliteColumn]
 function makeColumnDecl
 StructItem ::= col::SqliteColumn
 {
-  local attribute typeExpr :: BaseTypeExpr =
+  local typeExpr :: BaseTypeExpr =
     case col.typ of
       sqliteVarchar() ->
         directTypeExpr(builtinType([constQualifier()], unsignedType(charType())))
     | sqliteInteger() ->
         directTypeExpr(builtinType([], signedType(intType())))
     end;
-  local attribute mod :: TypeModifierExpr =
+  local mod :: TypeModifierExpr =
     case col.typ of
       sqliteVarchar() -> pointerTypeExpr([], baseTypeExpr())
     | sqliteInteger() -> baseTypeExpr()
@@ -197,7 +197,7 @@ InitList ::= columns::[SqliteColumn] query::Expr colIndex::Integer
 function makeColumnInit
 Init ::= col::SqliteColumn query::Expr colIndex::Integer
 {
-  local attribute f :: String =
+  local f :: String =
     case col.typ of
       sqliteVarchar() -> "sqlite3_column_text"
     | sqliteInteger() -> "sqlite3_column_int"

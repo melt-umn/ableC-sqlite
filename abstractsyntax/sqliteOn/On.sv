@@ -122,7 +122,7 @@ top::Stmt ::= db::Expr query::SqliteQuery queryName::Name
 abstract production sqliteCommitDb
 top::Expr ::= db::Expr query::SqliteQuery
 {
-  local attribute queryName :: Name =
+  local queryName :: Name =
     name("_commit_stmt", location=builtIn());
 
   local stepStmt :: Stmt =
