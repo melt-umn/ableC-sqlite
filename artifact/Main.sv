@@ -1,4 +1,5 @@
-grammar artifact;
+grammar edu:umn:cs:melt:exts:ableC:sqlite:artifact;
+
 -- Ideally, in the future, we won't have to write files like these.
 -- This file exists only because we need to do the composition at compile time.
 
