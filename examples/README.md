@@ -7,4 +7,4 @@
 
 ### Minor
 + remove test.db
-+ put sqlite.xh in the proper place
+
