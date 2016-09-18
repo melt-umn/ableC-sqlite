@@ -18,8 +18,6 @@ basefilename="${filename_withoutpath%.*}"
 cfile="${basefilename}.pp_out.c"
 #cfile="${basefilename}.c"
 
-# ToDo: check that sqlite.o exists, if not print
-# a message telling the users how to go build it.
-# It is as easy as `gcc -c sqlite3.c`
+CC=gcc make ../sqlite/sqlite3.o
 
 gcc -lpthread -ldl ../sqlite/sqlite3.o ${cfile} -o ${basefilename}
