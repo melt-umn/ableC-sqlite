@@ -7,11 +7,11 @@ sqlite3 databases.
 ## Set up environment
 The build scripts assume that the [ableC](https://github.com/melt-umn/ableC)
 source exists at `../../ableC/` relative to here. The prerequisites for building
-this extension, particulary that [Silver](http://code.google.com/p/silver/wiki/InstallGuide)
+this extension, particularly that [Silver](http://melt.cs.umn.edu/silver/doc/install-guide/)
 be installed, are identical to those of building ableC.
 
 ## Build the extended ableC
-Also see [artifact/README.md].
+Also see [artifact/README.md](artifact/README.md).
 
 ```
 cd artifact/
@@ -21,7 +21,7 @@ cd artifact/
 This will produce `ableC.jar`.
 
 ## Use the extended ableC
-Also see [examples/README.md].
+Also see [examples/README.md](examples/README.md).
 
 ```
 cd examples/
