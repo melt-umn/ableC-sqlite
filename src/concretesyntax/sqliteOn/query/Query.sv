@@ -1,7 +1,7 @@
-grammar edu:umn:cs:melt:exts:ableC:sqlite:concretesyntax:sqliteOn:query;
+grammar edu:umn:cs:melt:exts:ableC:sqlite:src:concretesyntax:sqliteOn:query;
 
 imports edu:umn:cs:melt:ableC:concretesyntax as cnc;
-imports edu:umn:cs:melt:exts:ableC:sqlite:abstractsyntax as abs;
+imports edu:umn:cs:melt:exts:ableC:sqlite:src:abstractsyntax as abs;
 imports edu:umn:cs:melt:ableC:abstractsyntax as abs;
 import silver:langutil;
 

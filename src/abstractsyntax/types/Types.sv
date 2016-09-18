@@ -1,7 +1,7 @@
-grammar edu:umn:cs:melt:exts:ableC:sqlite:abstractsyntax:types;
+grammar edu:umn:cs:melt:exts:ableC:sqlite:src:abstractsyntax:types;
 
-imports edu:umn:cs:melt:exts:ableC:sqlite:abstractsyntax as abs;
-imports edu:umn:cs:melt:exts:ableC:sqlite:abstractsyntax:tables as tbls;
+imports edu:umn:cs:melt:exts:ableC:sqlite:src:abstractsyntax as abs;
+imports edu:umn:cs:melt:exts:ableC:sqlite:src:abstractsyntax:tables as tbls;
 import edu:umn:cs:melt:ableC:abstractsyntax;
 import edu:umn:cs:melt:ableC:abstractsyntax:env;
 import edu:umn:cs:melt:ableC:abstractsyntax:overload;
@@ -33,7 +33,7 @@ top::Type ::= qs::[Qualifier] tables::[tbls:SqliteTable]
             refIdTagType(
               structSEU(),
               "_sqlite_db_s",
-              "edu:umn:cs:melt:exts:ableC:sqlite:_sqlite_db_s"
+              "edu:umn:cs:melt:exts:ableC:sqlite:src:_sqlite_db_s"
             )
           )
         )
@@ -68,7 +68,7 @@ top::Type ::= qs::[Qualifier] columns::[abs:SqliteColumn]
             refIdTagType(
               structSEU(),
               "_sqlite_query_s",
-              "edu:umn:cs:melt:exts:ableC:sqlite:_sqlite_query_s"
+              "edu:umn:cs:melt:exts:ableC:sqlite:src:_sqlite_query_s"
             )
           )
         )

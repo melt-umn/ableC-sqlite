@@ -1,9 +1,9 @@
-grammar edu:umn:cs:melt:exts:ableC:sqlite:concretesyntax:sqliteOn;
+grammar edu:umn:cs:melt:exts:ableC:sqlite:src:concretesyntax:sqliteOn;
 
 imports edu:umn:cs:melt:ableC:concretesyntax as cnc;
-imports edu:umn:cs:melt:exts:ableC:sqlite:abstractsyntax as abs;
+imports edu:umn:cs:melt:exts:ableC:sqlite:src:abstractsyntax as abs;
 import silver:langutil;
-import edu:umn:cs:melt:exts:ableC:sqlite:concretesyntax:sqliteOn:query;
+import edu:umn:cs:melt:exts:ableC:sqlite:src:concretesyntax:sqliteOn:query;
 
 marking terminal SqliteOn_t 'on' lexer classes {Ckeyword};
 

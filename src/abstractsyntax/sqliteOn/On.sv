@@ -1,9 +1,9 @@
-grammar edu:umn:cs:melt:exts:ableC:sqlite:abstractsyntax:sqliteOn;
+grammar edu:umn:cs:melt:exts:ableC:sqlite:src:abstractsyntax:sqliteOn;
 
-imports edu:umn:cs:melt:exts:ableC:sqlite:abstractsyntax as abs;
+imports edu:umn:cs:melt:exts:ableC:sqlite:src:abstractsyntax as abs;
 imports edu:umn:cs:melt:ableC:concretesyntax as cnc;
-imports edu:umn:cs:melt:exts:ableC:sqlite:abstractsyntax:tables;
-imports edu:umn:cs:melt:exts:ableC:sqlite:abstractsyntax:foreach as foreach;
+imports edu:umn:cs:melt:exts:ableC:sqlite:src:abstractsyntax:tables;
+imports edu:umn:cs:melt:exts:ableC:sqlite:src:abstractsyntax:foreach as foreach;
 imports edu:umn:cs:melt:ableC:abstractsyntax;
 imports edu:umn:cs:melt:ableC:abstractsyntax:construction;
 imports silver:langutil;

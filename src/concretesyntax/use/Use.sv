@@ -1,8 +1,8 @@
-grammar edu:umn:cs:melt:exts:ableC:sqlite:concretesyntax:use;
+grammar edu:umn:cs:melt:exts:ableC:sqlite:src:concretesyntax:use;
 
 imports edu:umn:cs:melt:ableC:concretesyntax as cnc;
 imports edu:umn:cs:melt:ableC:abstractsyntax as abs;
-imports edu:umn:cs:melt:exts:ableC:sqlite:abstractsyntax as abs;
+imports edu:umn:cs:melt:exts:ableC:sqlite:src:abstractsyntax as abs;
 import silver:langutil;
 
 marking terminal SqliteUse_t 'use' lexer classes {Ckeyword};
