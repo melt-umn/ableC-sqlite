@@ -25,7 +25,7 @@ Also see [examples/README.md](examples/README.md).
 
 ```
 cd examples/
-./compile.sh example1-print-person-table.xc
+./compile.sh print_person_table.xc
 
 ```
 
