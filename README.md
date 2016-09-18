@@ -6,7 +6,8 @@ sqlite3 databases.
 
 ## Set up environment
 The build scripts assume that the [ableC](https://github.com/melt-umn/ableC)
-source exists at `../../ableC/` relative to here. The prerequisites for building
+source exists at `../../ableC/` relative to here. A reasonable location to
+clone this repository into might be `ableC/extensions/`. The prerequisites for building
 this extension, particularly that [Silver](http://melt.cs.umn.edu/silver/doc/install-guide/)
 be installed, are identical to those of building ableC.
 
@@ -14,8 +15,8 @@ be installed, are identical to those of building ableC.
 Also see [artifact/README.md](artifact/README.md).
 
 ```
-cd artifact/
-./build.sh
+$ cd artifact/
+$ ./build.sh
 ```
 
 This will produce `ableC.jar`.
@@ -24,8 +25,11 @@ This will produce `ableC.jar`.
 Also see [examples/README.md](examples/README.md).
 
 ```
-cd examples/
-./compile.sh print_person_table.xc
-
+$ cd examples/
+$ ./create_database.sh
+$ ./compile.sh populate_tables.xc
+$ ./populate_tables
+$ ./compile.sh print_person_table.xc
+$ ./print_person_table
 ```
 
