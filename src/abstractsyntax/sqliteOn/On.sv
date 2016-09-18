@@ -6,11 +6,14 @@ imports edu:umn:cs:melt:exts:ableC:sqlite:src:abstractsyntax:tables;
 imports edu:umn:cs:melt:exts:ableC:sqlite:src:abstractsyntax:foreach as foreach;
 imports edu:umn:cs:melt:ableC:abstractsyntax;
 imports edu:umn:cs:melt:ableC:abstractsyntax:construction;
+imports edu:umn:cs:melt:ableC:abstractsyntax:env;
 imports silver:langutil;
 
 abstract production sqliteQueryDb
 top::Stmt ::= db::Expr query::SqliteQuery queryName::Name
 {
+  db.env = top.env;
+
   local dbTables :: [SqliteTable] =
     case db.typerep of
       abs:sqliteDbType(_, dbTables) -> dbTables
@@ -189,6 +192,8 @@ top::Stmt ::= exprParams::[Expr] queryName::Name i::Integer
 abstract production makeBind
 top::Expr ::= exprParam::Expr queryName::Name i::Integer
 {
+  exprParam.env = top.env;
+
   forwards to
     if isTextType(exprParam.typerep)
     then makeBindText(exprParam, queryName, i, location=builtIn())

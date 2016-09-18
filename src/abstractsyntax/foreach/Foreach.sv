@@ -4,11 +4,14 @@ imports edu:umn:cs:melt:exts:ableC:sqlite:src:abstractsyntax as abs;
 imports edu:umn:cs:melt:exts:ableC:sqlite:src:abstractsyntax:tables;
 imports edu:umn:cs:melt:ableC:abstractsyntax;
 imports edu:umn:cs:melt:ableC:abstractsyntax:construction;
+imports edu:umn:cs:melt:ableC:abstractsyntax:env;
 imports silver:langutil;
 
 abstract production sqliteForeach
 top::Stmt ::= row::Name query::Expr body::Stmt
 {
+  query.env = top.env;
+
   local localErrors :: [Message] =
     case query.typerep of
       abs:sqliteQueryType(_, _) -> []
