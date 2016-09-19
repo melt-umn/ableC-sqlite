@@ -5,13 +5,6 @@
 
 /* clear the database and repopulate it */
 
-struct person_and_details_t {
-  const char *first_name;
-  const char *last_name;
-  int age;
-  const char *gender;
-};
-
 int main(void)
 {
   use "test.db" with {
@@ -26,39 +19,15 @@ int main(void)
   on db commit { DELETE FROM person };
   on db commit { DELETE FROM details };
 
-  srand(time(NULL));
-  struct person_and_details_t c_people[] = {
-    {"Aaron",    "Allen",       (rand() % 10), "M"},
-    {"Abigail",  "Adams",  10 + (rand() % 10), "F"},
-    {"Benjamin", "Brown",  20 + (rand() % 10), "M"},
-    {"Belle",    "Bailey", 30 + (rand() % 10), "F"},
-  };
+  on db commit { INSERT INTO person VALUES (0, 'Aaron',    'Allen') };
+  on db commit { INSERT INTO person VALUES (1, 'Abigail',  'Adams') };
+  on db commit { INSERT INTO person VALUES (2, 'Benjamin', 'Brown') };
+  on db commit { INSERT INTO person VALUES (3, 'Belle',    'Bailey') };
 
-  int i;
-  for (i=0; i < sizeof(c_people) / sizeof(struct person_and_details_t); ++i) {
-    on db commit {
-      INSERT INTO person VALUES
-        (${i}, ${c_people[i].first_name}, ${c_people[i].last_name})
-    };
-
-    on db commit {
-      INSERT INTO details VALUES
-        (${i}, ${c_people[i].age}, ${c_people[i].gender})
-    };
-  }
-
-  on db query {
-    SELECT person.person_id AS person_id, first_name, last_name, age, gender
-    FROM   person JOIN details
-                    ON person.person_id = details.person_id
-  } as people;
-
-  foreach (person : people) {
-    printf("%d %10s %10s %2d %s\n", person.person_id, person.first_name,
-        person.last_name, person.age, person.gender);
-  }
-
-  finalize(people);
+  on db commit { INSERT INTO details VALUES (0,  5, 'M') };
+  on db commit { INSERT INTO details VALUES (1, 15, 'F') };
+  on db commit { INSERT INTO details VALUES (2, 25, 'M') };
+  on db commit { INSERT INTO details VALUES (3, 35, 'F') };
 
   db_exit(db);
 
