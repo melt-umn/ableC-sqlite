@@ -6,7 +6,7 @@ main() {
 
 	# don't worry if test.db is already populated,
 	# running on a pre-existing database will just print an error and exit
-	echo """
+	echo "
 		CREATE TABLE person (
 			person_id  INTEGER,
 			first_name VARCHAR,
@@ -17,7 +17,7 @@ main() {
 			age        INTEGER,
 			gender     VARCHAR
 		);
-	""" | $sqlite3 "test.db"
+	" | $sqlite3 "test.db"
 }
 
 # find the sqlite3 binary
@@ -25,13 +25,12 @@ main() {
 find_sqlite3() {
 	if which sqlite3 > /dev/null; then
 		sqlite3=`which sqlite3`
-	else
-		if [ ! -f ../sqlite/sqlite3.c ]; then
-			echo "ERROR: ../sqlite3/sqlite3.c not found" >&2
-			exit 255
-		fi
+	elif [ -f ../sqlite/sqlite3.c ]; then
 		make -sC ../sqlite/
 		sqlite3="../sqlite/sqlite3"
+	else
+		echo "ERROR: ../sqlite3/sqlite3.c not found" >&2
+		exit 255
 	fi
 	echo $sqlite3
 }
