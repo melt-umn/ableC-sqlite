@@ -104,7 +104,7 @@ The following example commits changes to `db`. Any valid (case-sensitive) SQL st
 
 ## Querying a database
 
-The following example queries `db` to declare and initialize variables `all_people` and `selected_people`. The type of `all_people` is `_sqlite_query_s *` (a structure containing `sqlite3_stmt *`) annotated with the selected columns `person_id`, `first_name`, and `last_name`. The type of `selected_people` is `_sqlite_query` annotated with the selected columns `age`, `gender`, and `surname`.
+The following example queries `db` to declare and initialize variables `all_people` and `selected_people`. The type of `all_people` is `_sqlite_query_s *` (a structure containing `sqlite3_stmt *`) annotated with the selected columns `person_id`, `first_name`, and `last_name`. The type of `selected_people` is `_sqlite_query_s *` annotated with the selected columns `age`, `gender`, and `surname`.
 
 ```
   on db query {
