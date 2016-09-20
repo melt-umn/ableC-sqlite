@@ -11,7 +11,7 @@ clone this repository into might be `ableC/`. The prerequisites for building
 this extension, particularly that [Silver](http://melt.cs.umn.edu/silver/doc/install-guide/)
 be installed, are identical to those of building ableC.
 
-### SQLite Shared Library and Header Files
+### SQLite shared library and header files
 
 Although not necessary to run the examples, you might find it useful to install the sqlite development package on your system. With this package, the sqlite shared library can be linked by passing `-lsqlite3` to gcc; without it, the `sqlite.c` source needs to be compiled to an `sqlite.o` object file, which your project then needs to link.
 
