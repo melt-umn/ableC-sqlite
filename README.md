@@ -1,12 +1,12 @@
 # Introduction
-This ableC extension provides language constructs useful for working with
+This [ableC](http://melt.cs.umn.edu/ableC/) extension provides language constructs useful for working with
 sqlite3 databases.
 
 # Quick Start
 
 ## Set up environment
-The build scripts assume that the [ableC](https://github.com/melt-umn/ableC)
-source exists at `../../ableC/` relative to this directory. A reasonable location to
+The build scripts assume that the [ableC source](https://github.com/melt-umn/ableC)
+ exists at `../../ableC/` relative to this directory. A reasonable location to
 clone this repository into might be `ableC/`. The prerequisites for building
 this extension, particularly that [Silver](http://melt.cs.umn.edu/silver/doc/install-guide/)
 be installed, are identical to those of building ableC.
@@ -65,6 +65,12 @@ echo "
 
 ## Connecting to a database
 
+See [src/concretesyntax/use/Use.sv](src/concretesyntax/use/Use.sv).
+
+```
+top::Stmt_c ::= 'use' dbFilename::Expr_c tables::SqliteOptWithTables_c 'as' dbName::Identifier_t
+```
+
 The following example declares and initializes a variable `db`. Its type is `_sqlite_db_s *` (a structure containing `sqlite *`) annotated with the specified tables and columns.
 
 ```
@@ -83,8 +89,13 @@ The following example declares and initializes a variable `db`. Its type is `_sq
 
 ## Modifying a database
 
-The following example commits changes to `db`. Any valid (case-sensitive) SQL statement can be used inside of the braces. The official [SQLite grammar](https://www.sqlite.org/lang.html) grammar is largely, though not completely, supported. Additionally, an SQL expression enclosed in dollar curly-braces (`${c_expr}`) will be interpreted as a regular C expression (not used in this example, see the next section.)
+See [src/concretesyntax/sqliteOn/On.sv](src/concretesyntax/sqliteOn/On.sv).
 
+```
+top::Expr_c ::= 'on' db::Expr_c 'commit' '{' query::SqliteQuery_c '}'
+```
+
+The following example commits changes to `db`. Any valid (case-sensitive) SQL statement can be used inside of the braces. The official [SQLite grammar](https://www.sqlite.org/lang.html) grammar is largely, though not completely, supported. Additionally, an SQL expression enclosed in dollar curly-braces (`${c_expr}`) will be interpreted as a regular C expression (not used in this example, see the next section.) If interested in the details of the supported grammar as implemented, see the source at [src/concretesyntax/sqliteOn/query/Query.sv](src/concretesyntax/sqliteOn/query/Query.sv).
 
 ```
   on db commit { DELETE FROM person };
@@ -103,6 +114,12 @@ The following example commits changes to `db`. Any valid (case-sensitive) SQL st
 
 
 ## Querying a database
+
+See [src/concretesyntax/sqliteOn/On.sv](src/concretesyntax/sqliteOn/On.sv).
+
+```
+top::Stmt_c ::= 'on' db::Expr_c 'query' '{' query::SqliteQuery_c '}' 'as' queryName::Identifier_t
+```
 
 The following example queries `db` to declare and initialize variables `all_people` and `selected_people`. The type of `all_people` is `_sqlite_query_s *` (a structure containing `sqlite3_stmt *`) annotated with the selected columns `person_id`, `first_name`, and `last_name`. The type of `selected_people` is `_sqlite_query_s *` annotated with the selected columns `age`, `gender`, and `surname`.
 
@@ -125,6 +142,12 @@ The following example queries `db` to declare and initialize variables `all_peop
 ```
 
 ### Looping through query results
+
+See [src/concretesyntax/foreach/Foreach.sv](src/concretesyntax/foreach/Foreach.sv).
+
+```
+top::Stmt_c ::= 'foreach' '(' row::Identifier_t ':' stmt::Expr_c ')' body::Stmt_c
+```
 
 The following example loops through the results of the queries above. In each loop iteration, a variable `person` is declared and initialized. It is an anonymous structure containing fields matching the selected columns.
 
