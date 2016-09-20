@@ -1,9 +1,15 @@
+# How to Compile
+
+## compile.sh
+
+Run `./compile.sh filename.xc` to generate the executable `filename`.
+
+This script requires:
+* `../artifact/ableC.jar`
+* `../include/sqlite.xh`
+* either:
+  * installation of the SQLite shared library and header files; or
+  * `../sqlite/sqlite3.c`
+
 # To Do
-
-+ create a `create_database.xc` example that creates the sample
-  database, this way test.db isn't in the repo.
-+ rewrite this README to explain it all.
-
-### Minor
-+ remove test.db
-
++ complete this README.
