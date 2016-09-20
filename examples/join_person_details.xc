@@ -20,7 +20,7 @@ int main(void)
     SELECT   age, gender, last_name AS surname
     FROM     person JOIN details
                       ON person.person_id = details.person_id
-    WHERE    age >= ${min_age} AND surname <> ${except_surname}
+    WHERE    age >= $(min_age) AND surname <> $(except_surname)
     ORDER BY surname DESC
   } as selected_people;
 

@@ -1,4 +1,4 @@
-grammar edu:umn:cs:melt:exts:ableC:sqlite:src:concretesyntax:sqliteOn:query;
+grammar edu:umn:cs:melt:exts:ableC:sqlite:src:concretesyntax:query;
 
 imports edu:umn:cs:melt:ableC:concretesyntax as cnc;
 imports edu:umn:cs:melt:exts:ableC:sqlite:src:abstractsyntax as abs;
@@ -746,7 +746,15 @@ concrete productions top::SqliteExpr_c
 --| SqliteRaiseFunction_c
 --  {
 --  }
-|  '$' '{' e::cnc:Expr_c '}'
+
+{- The folloinwg production fails the modular determinism analysis
+   because it adds the right curly brace to the follow set of Expr_c.
+   Adding to the follow sets of host language nonterminals is not
+   allowed.  The fix is to replace curly braces with parenthesis.  
+ -}
+-- |  '$' '{' e::cnc:Expr_c '}'
+
+|  '$' '(' e::cnc:Expr_c ')'
   {
     top.ast = abs:sqliteCExpr(e.ast);
     top.unparse = "?";
