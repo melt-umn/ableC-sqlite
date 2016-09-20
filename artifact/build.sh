@@ -1,5 +1,8 @@
 #!/bin/bash
 
+# turn on option to exit on non-zero return code.
+set -e
+
 # Since this sample artifact directory is just named 'artifact' the script
 # for building this one and all others are the same.
 
