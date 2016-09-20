@@ -95,7 +95,7 @@ See [src/concretesyntax/sqliteOn/On.sv](src/concretesyntax/sqliteOn/On.sv).
 top::Expr_c ::= 'on' db::Expr_c 'commit' '{' query::SqliteQuery_c '}'
 ```
 
-The following example commits changes to `db`. Any valid (case-sensitive) SQL statement can be used inside of the braces. The official [SQLite grammar](https://www.sqlite.org/lang.html) is largely, though not completely, supported. Additionally, an SQL expression enclosed in dollar curly-braces (`${c_expr}`) will be interpreted as a regular C expression (not used in this example, see the next section.) If interested in the details of the supported grammar as implemented, see the source at [src/concretesyntax/sqliteOn/query/Query.sv](src/concretesyntax/sqliteOn/query/Query.sv).
+The following example commits changes to `db`. Any valid (case-sensitive) SQL statement can be used inside of the braces. The official [SQLite grammar](https://www.sqlite.org/lang.html) is largely, though not completely, supported. Additionally, an SQL expression enclosed in dollar parentheses (`$(c_expr)`) will be interpreted as a regular C expression (not used in this example, see the next section.) If interested in the details of the supported grammar as implemented, see the source at [src/concretesyntax/sqliteOn/query/Query.sv](src/concretesyntax/sqliteOn/query/Query.sv).
 
 ```
   on db commit { DELETE FROM person };
@@ -132,7 +132,7 @@ The following example queries `db` to declare and initialize variables `all_peop
     SELECT   age, gender, last_name AS surname
     FROM     person JOIN details
                       ON person.person_id = details.person_id
-    WHERE    age >= ${min_age} AND surname <> ${except_surname}
+    WHERE    age >= $(min_age) AND surname <> $(except_surname)
     ORDER BY surname DESC
   } as selected_people;
 
