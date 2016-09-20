@@ -38,12 +38,12 @@ int main(void)
   for (i=0; i < sizeof(c_people) / sizeof(struct person_and_details_t); ++i) {
     on db commit {
       INSERT INTO person VALUES
-        (${i}, ${c_people[i].first_name}, ${c_people[i].last_name})
+        ($(i), $(c_people[i].first_name), $(c_people[i].last_name))
     };
 
     on db commit {
       INSERT INTO details VALUES
-        (${i}, ${c_people[i].age}, ${c_people[i].gender})
+        ($(i), $(c_people[i].age), $(c_people[i].gender))
     };
   }
 
