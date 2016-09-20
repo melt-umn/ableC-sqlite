@@ -1,7 +1,8 @@
 #!/bin/bash
 
 # turn on verbose option, which echos commands to stdout
-set -v
+# also exit on non-zero return code
+set -v -e
 
 silver -I ../../.. -I ../../../../ableC -o MDWA.jar --clean --warn-all $@ \
        edu:umn:cs:melt:exts:ableC:sqlite:modular_analyses:well_definedness
