@@ -89,10 +89,11 @@ The following example declares and initializes a variable `db`. Its type is `_sq
 
 ## Modifying a database
 
-See [src/concretesyntax/sqliteOn/On.sv](src/concretesyntax/sqliteOn/On.sv).
+See [src/concretesyntax/sqliteOnCommit/Commit.sv](src/concretesyntax/sqliteOnCommit/Commit.sv).
 
 ```
-top::Expr_c ::= 'on' db::Expr_c 'commit' '{' query::SqliteQuery_c '}'
+top::Expr_c ::= 'on' id::Identifier_t   'commit' '{' query::SqliteQuery_c '}'
+              | 'on' '(' db::Expr_c ')' 'commit' '{' query::SqliteQuery_c '}'
 ```
 
 The following example commits changes to `db`. Any valid (case-sensitive) SQL statement can be used inside of the braces. The official [SQLite grammar](https://www.sqlite.org/lang.html) is largely, though not completely, supported. Additionally, an SQL expression enclosed in dollar parentheses (`$(c_expr)`) will be interpreted as a regular C expression (not used in this example, see the next section.) If interested in the details of the supported grammar as implemented, see the source at [src/concretesyntax/sqliteOn/query/Query.sv](src/concretesyntax/sqliteOn/query/Query.sv).
@@ -115,10 +116,11 @@ The following example commits changes to `db`. Any valid (case-sensitive) SQL st
 
 ## Querying a database
 
-See [src/concretesyntax/sqliteOn/On.sv](src/concretesyntax/sqliteOn/On.sv).
+See [src/concretesyntax/sqliteOnQuery/Query.sv](src/concretesyntax/sqliteOnQuery/Query.sv).
 
 ```
-top::Stmt_c ::= 'on' db::Expr_c 'query' '{' query::SqliteQuery_c '}' 'as' queryName::Identifier_t
+top::Stmt_c ::= 'on' id::Identifier_t   'query' '{' query::SqliteQuery_c '}' 'as' queryName::Identifier_t
+              | 'on' '(' db::Expr_c ')' 'query' '{' query::SqliteQuery_c '}' 'as' queryName::Identifier_t
 ```
 
 The following example queries `db` to declare and initialize variables `all_people` and `selected_people`. The type of `all_people` is `_sqlite_query_s *` (a structure containing `sqlite3_stmt *`) annotated with the selected columns `person_id`, `first_name`, and `last_name`. The type of `selected_people` is `_sqlite_query_s *` annotated with the selected columns `age`, `gender`, and `surname`.
