@@ -52,7 +52,7 @@ stage ("Build") {
                ],
                submoduleCfg: [],
                userRemoteConfigs: [
-                 [url: 'git@github.com:melt-umn/ableC.git']
+                 [url: 'https://github.com/melt-umn/ableC.git']
                ]
              ])
 
