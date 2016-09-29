@@ -43,7 +43,7 @@ stage ("Build") {
   /* a node allocates an executor to actually do work */
   node {
     checkout([ $class: 'GitSCM',
-               branches: [[name: '*/master']],
+               branches: [[name: '*/develop']],
                doGenerateSubmoduleConfigurations: false,
                extensions: [
                  [ $class: 'RelativeTargetDirectory',
