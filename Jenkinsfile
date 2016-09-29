@@ -42,7 +42,6 @@ stage ("Build") {
 
   /* a node allocates an executor to actually do work */
   node {
-    checkout scm
     checkout([ $class: 'GitSCM',
                branches: [[name: '*/master']],
                doGenerateSubmoduleConfigurations: false,
@@ -55,10 +54,16 @@ stage ("Build") {
                  [url: 'https://github.com/melt-umn/ableC.git']
                ]
              ])
+    checkout scm:([ $class: 'GitSCM',
+               extensions: [
+                 [ $class: 'RelativeTargetDirectory',
+                   relativeTargetDir: 'ableC/edu.umn.cs.melt.exts.ableC.sqlite.artifact']
+               ]
+             ])
 
     /* env.PATH is the master's path, not the executor's */
     withEnv(["PATH=${SILVER_BASE}/support/bin/:${env.PATH}"]) {
-      sh "silver -I .. -I ableC -o artifact/ableC.jar edu:umn:cs:melt:exts:ableC:sqlite:artifact"
+      sh "cd ableC/edu.umn.cs.melt.exts.ableC.sqlite.artifact && ./build.sh"
     }
   }
 
