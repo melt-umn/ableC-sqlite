@@ -54,16 +54,22 @@ stage ("Build") {
                  [url: 'https://github.com/melt-umn/ableC.git']
                ]
              ])
-    checkout scm:([ $class: 'GitSCM',
+    checkout([ $class: 'GitSCM',
+               branches: [[name: '*/master']],
+               doGenerateSubmoduleConfigurations: false,
                extensions: [
                  [ $class: 'RelativeTargetDirectory',
-                   relativeTargetDir: 'ableC/edu.umn.cs.melt.exts.ableC.sqlite.artifact']
+                   relativeTargetDir: 'ableC/edu.umn.cs.melt.exts.ableC.sqlite']
+               ],
+               submoduleCfg: [],
+               userRemoteConfigs: [
+                 [url: 'https://github.com/melt-umn/edu.umn.cs.melt.exts.ableC.sqlite.git']
                ]
              ])
 
     /* env.PATH is the master's path, not the executor's */
     withEnv(["PATH=${SILVER_BASE}/support/bin/:${env.PATH}"]) {
-      sh "cd ableC/edu.umn.cs.melt.exts.ableC.sqlite.artifact && ./build.sh"
+      sh "cd ableC/edu.umn.cs.melt.exts.ableC.sqlite/artifact && ./build.sh"
     }
   }
 
