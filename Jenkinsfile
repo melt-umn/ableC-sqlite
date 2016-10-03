@@ -75,3 +75,13 @@ stage ("Build") {
 
 }
 
+stage ("Modular Analyses") {
+  node {
+    withEnv(["PATH=${SILVER_BASE}/support/bin/:${env.PATH}"]) {
+      def mdir = "ableC/edu.umn.cs.melt.exts.ableC.sqlite/modular_analyses"
+      sh "cd ${mdir}/determinism && ./run.sh"
+      sh "cd ${mdir}/well_definedness && ./run.sh"
+    }
+  }
+}
+
