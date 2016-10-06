@@ -23,13 +23,21 @@ main() {
 # find the sqlite3 binary
 # use binary in path if it exists, otherwise build from ../sqlite3/
 find_sqlite3() {
+	# TODO: better handle dependency on cwd
+	top_level=".."
+	if [ -d ../../artifact ]; then
+		top_level="../.."
+	elif [ -d ../../../artifact ]; then
+		top_level="../../.."
+	fi
+
 	if which sqlite3 > /dev/null; then
 		sqlite3=`which sqlite3`
-	elif [ -f ../sqlite/sqlite3.c ]; then
-		make -sC ../sqlite/
-		sqlite3="../sqlite/sqlite3"
+	elif [ -f $top_level/sqlite/sqlite3.c ]; then
+		make -sC $top_level/sqlite/
+		sqlite3="$top_level/sqlite/sqlite3"
 	else
-		echo "ERROR: ../sqlite3/sqlite3.c not found" >&2
+		echo "ERROR: $top_level/sqlite3/sqlite3.c not found" >&2
 		exit 255
 	fi
 	echo $sqlite3
