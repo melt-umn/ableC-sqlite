@@ -88,7 +88,6 @@ stage ("Modular Analyses") {
 stage ("Test") {
   node {
     def top_dir = "ableC/edu.umn.cs.melt.exts.ableC.sqlite"
-    sh "cd ${top_dir}/sqlite && gcc -lpthread -l ldl -o sqlite3 shell.c sqlite3.c"
     sh "cd ${top_dir}/test/positive && ./the_tests.sh"
     sh "cd ${top_dir}/test/negative && ./the_tests.sh"
   }
