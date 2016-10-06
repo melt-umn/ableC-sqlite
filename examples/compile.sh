@@ -39,7 +39,7 @@ else
 	exit 255
 fi
 
-cmd="gcc -lpthread -ldl ${link_sqlite3} ${cfile} -o ${basefilename}"
+cmd="gcc ${link_sqlite3} ${cfile} -o ${basefilename} -pthread -ldl"
 echo $cmd
 $cmd
 
