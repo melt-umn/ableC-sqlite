@@ -7,7 +7,15 @@ set -e
 # Of course, if the use of 'cut' below fails for you, then just run
 # the commands individually by hand.
 
-cmd="java -jar ../artifact/ableC.jar $1 -I ../include"
+# TODO: better handle dependency on cwd
+top_level=".."
+if [ -d ../../artifact ]; then
+	top_level="../.."
+elif [ -d ../../../artifact ]; then
+	top_level="../../.."
+fi
+
+cmd="java -jar $top_level/artifact/ableC.jar $1 -I $top_level/include"
 echo $cmd
 $cmd
 
@@ -23,9 +31,9 @@ cfile="${basefilename}.pp_out.c"
 
 if ldconfig -p | grep -q libsqlite3; then
 	link_sqlite3="-lsqlite3"
-elif [ -f ../sqlite/sqlite3.c ]; then
-	CC=gcc make ../sqlite/sqlite3.o
-	link_sqlite3="../sqlite/sqlite3.o"
+elif [ -f $top_level/sqlite/sqlite3.c ]; then
+	CC=gcc make $top_level/sqlite/sqlite3.o
+	link_sqlite3="$top_level/sqlite/sqlite3.o"
 else
 	echo "ERROR: sqlite3 library not found" >&2
 	exit 255

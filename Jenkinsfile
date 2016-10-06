@@ -85,3 +85,11 @@ stage ("Modular Analyses") {
   }
 }
 
+stage ("Test") {
+  node {
+    def tdir = "ableC/edu.umn.cs.melt.exts.ableC.sqlite/test"
+    sh "cd ${tdir}/positive && ./the_tests.sh"
+    sh "cd ${tdir}/negative && ./the_tests.sh"
+  }
+}
+
