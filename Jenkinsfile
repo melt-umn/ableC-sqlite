@@ -87,7 +87,7 @@ stage ("Build") {
 
     /* env.PATH is the master's path, not the executor's */
     withEnv(["PATH=${SILVER_BASE}/support/bin/:${env.PATH}"]) {
-      sh "cd ${ABLEC_BASE}/edu.umn.cs.melt.exts.ableC.sqlite/artifact && ./build.sh"
+      sh "cd ${params.ABLEC_BASE}/edu.umn.cs.melt.exts.ableC.sqlite/artifact && ./build.sh"
     }
   }
 
