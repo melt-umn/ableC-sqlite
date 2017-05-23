@@ -65,7 +65,7 @@ stage ("Build") {
                doGenerateSubmoduleConfigurations: false,
                extensions: [
                  [ $class: 'RelativeTargetDirectory',
-                   relativeTargetDir: 'ableC']
+                   relativeTargetDir: ABLEC_BASE]
                ],
                submoduleCfg: [],
                userRemoteConfigs: [
@@ -87,7 +87,7 @@ stage ("Build") {
 
     /* env.PATH is the master's path, not the executor's */
     withEnv(["PATH=${SILVER_BASE}/support/bin/:${env.PATH}"]) {
-      sh "cd ableC/edu.umn.cs.melt.exts.ableC.sqlite/artifact && ./build.sh"
+      sh "cd ${ABLEC_BASE}/edu.umn.cs.melt.exts.ableC.sqlite/artifact && ./build.sh"
     }
   }
 
