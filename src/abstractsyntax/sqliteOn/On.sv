@@ -8,10 +8,16 @@ imports edu:umn:cs:melt:ableC:abstractsyntax;
 imports edu:umn:cs:melt:ableC:abstractsyntax:construction;
 imports edu:umn:cs:melt:ableC:abstractsyntax:env;
 imports silver:langutil;
+imports silver:langutil:pp;
 
 abstract production sqliteQueryDb
 top::Stmt ::= db::Expr query::SqliteQuery queryName::Name
 {
+  -- TODO: add pp to query
+  top.pp = ppConcat([
+--    db.pp, space(), query.pp, space(), queryName.pp
+    db.pp, space(), queryName.pp
+  ]);
   db.env = top.env;
 
   local dbTables :: [SqliteTable] =
@@ -192,6 +198,7 @@ top::Stmt ::= exprParams::[Expr] queryName::Name i::Integer
 abstract production makeBind
 top::Expr ::= exprParam::Expr queryName::Name i::Integer
 {
+  top.pp = ppImplode(space(), [exprParam.pp, queryName.pp, text(toString(i))]);
   exprParam.env = top.env;
 
   forwards to

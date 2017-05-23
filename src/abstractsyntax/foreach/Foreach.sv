@@ -6,10 +6,14 @@ imports edu:umn:cs:melt:ableC:abstractsyntax;
 imports edu:umn:cs:melt:ableC:abstractsyntax:construction;
 imports edu:umn:cs:melt:ableC:abstractsyntax:env;
 imports silver:langutil;
+imports silver:langutil:pp;
 
 abstract production sqliteForeach
 top::Stmt ::= row::Name query::Expr body::Stmt
 {
+  top.pp = ppConcat([
+    row.pp, space(), query.pp, text("{"), line(), nestlines(2, body.pp), text("}")
+  ]);
   query.env = top.env;
 
   local localErrors :: [Message] =
