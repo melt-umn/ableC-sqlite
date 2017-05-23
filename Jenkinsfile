@@ -17,6 +17,11 @@ properties([
         name: 'ABLEC_BASE',
         defaultValue: 'ableC',
         description: 'AbleC installation path to use.'
+      ],
+      [ $class: 'BooleanParameterDefinition',
+        name: 'DOWNLOAD_ABLEC',
+        defaultValue: true,
+        description: 'AbleC installation path to use.'
       ]
     ]
   ],
@@ -64,7 +69,7 @@ stage ("Build") {
                doGenerateSubmoduleConfigurations: false,
                extensions: [
                  [ $class: 'RelativeTargetDirectory',
-                   relativeTargetDir: 'ableC/edu.umn.cs.melt.exts.ableC.sqlite']
+                   relativeTargetDir: "${ABLEC_BASE}/edu.umn.cs.melt.exts.ableC.sqlite"]
                ],
                submoduleCfg: [],
                userRemoteConfigs: [
