@@ -24,15 +24,6 @@ properties([
       ]
     ]
   ],
-  [ $class: 'ParametersDefinitionProperty',
-    parameterDefinitions: [
-      [ $class: 'BooleanParameterDefinition',
-        name: 'DOWNLOAD_ABLEC',
-        defaultValue: true,
-        description: 'Checkout AbleC.'
-      ]
-    ]
-  ],
   /* If we don't set this, everything is preserved forever.
      We don't bother discarding build logs (because they're small),
      but if this job keeps artifacts, we ask them to only stick around
@@ -87,8 +78,7 @@ stage ("Build") {
 
     /* env.PATH is the master's path, not the executor's */
     withEnv(["PATH=${SILVER_BASE}/support/bin/:${env.PATH}"]) {
-      sh "echo ${ABLEC_BASE}"
-      sh "cd ableC/edu.umn.cs.melt.exts.ableC.sqlite/artifact && ./build.sh"
+      sh "cd ${ABLEC_BASE}/edu.umn.cs.melt.exts.ableC.sqlite/artifact && ./build.sh"
     }
   }
 
