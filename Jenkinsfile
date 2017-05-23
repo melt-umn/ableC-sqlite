@@ -52,7 +52,7 @@ stage ("Build") {
                doGenerateSubmoduleConfigurations: false,
                extensions: [
                  [ $class: 'RelativeTargetDirectory',
-                   relativeTargetDir: 'ableC']
+                   relativeTargetDir: ABLEC_BASE]
                ],
                submoduleCfg: [],
                userRemoteConfigs: [
