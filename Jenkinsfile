@@ -60,7 +60,7 @@ stage ("Build") {
 
   /* a node allocates an executor to actually do work */
   node {
-    if (DOWNLOAD_ABLEC) {
+    when (DOWNLOAD_ABLEC) {
       checkout([ $class: 'GitSCM',
                  branches: [[name: '*/develop']],
                  doGenerateSubmoduleConfigurations: false,
