@@ -78,13 +78,13 @@ top::Stmt ::= db::Expr query::SqliteQuery queryName::Name
     declStmt(
       variableDecls(
         [],
-        [],
+        nilAttribute(),
         abs:sqliteQueryTypeExpr(resultColumns),
         foldDeclarator([
           declarator(
             queryName,
             baseTypeExpr(),
-            [],
+            nilAttribute(),
             justInitializer(exprInitializer(callNew))
           )
         ])

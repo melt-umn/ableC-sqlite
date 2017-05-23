@@ -78,7 +78,7 @@ top::Stmt ::= row::Name query::Expr body::Stmt
     structTypeExpr(
       [constQualifier()],
       structDecl(
-        [],
+        nilAttribute(),
         nothingName(),
         columnDecls,
         location=builtIn()
@@ -101,13 +101,13 @@ top::Stmt ::= row::Name query::Expr body::Stmt
     declStmt(
       variableDecls(
         [],
-        [],
+        nilAttribute(),
         rowTypeExpr,
         foldDeclarator([
           declarator(
             row,
             baseTypeExpr(),
-            [],
+            nilAttribute(),
             justInitializer(rowInit)
           )
         ])
@@ -171,10 +171,10 @@ StructItem ::= col::SqliteColumn
 
   return
       structItem(
-        [],
+        nilAttribute(),
         typeExpr,
         foldStructDeclarator([
-          structField(col.columnName, mod, [])
+          structField(col.columnName, mod, nilAttribute())
         ])
       );
 }

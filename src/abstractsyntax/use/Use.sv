@@ -24,13 +24,13 @@ top::Stmt ::= dbFilename::Expr dbName::Name tableList::SqliteTableList
     declStmt(
       variableDecls(
         [],
-        [],
+        nilAttribute(),
         abs:sqliteDbTypeExpr(tableList.tables),
         foldDeclarator([
           declarator(
             dbName,
             baseTypeExpr(),
-            [],
+            nilAttribute(),
             justInitializer(exprInitializer(callNew)))
         ])
       )
