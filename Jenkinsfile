@@ -15,6 +15,24 @@ properties([
       ]
     ]
   ],
+  [ $class: 'ParametersDefinitionProperty',
+    parameterDefinitions: [
+      [ $class: 'StringParameterDefinition',
+        name: 'ABLEC_BASE',
+        defaultValue: 'ableC',
+        description: 'AbleC installation path to use.'
+      ]
+    ]
+  ],
+  [ $class: 'ParametersDefinitionProperty',
+    parameterDefinitions: [
+      [ $class: 'BooleanParameterDefinition',
+        name: 'DOWNLOAD_ABLEC',
+        defaultValue: true,
+        description: 'Checkout AbleC.'
+      ]
+    ]
+  ],
   /* If we don't set this, everything is preserved forever.
      We don't bother discarding build logs (because they're small),
      but if this job keeps artifacts, we ask them to only stick around
@@ -42,24 +60,26 @@ stage ("Build") {
 
   /* a node allocates an executor to actually do work */
   node {
-    checkout([ $class: 'GitSCM',
-               branches: [[name: '*/develop']],
-               doGenerateSubmoduleConfigurations: false,
-               extensions: [
-                 [ $class: 'RelativeTargetDirectory',
-                   relativeTargetDir: 'ableC']
-               ],
-               submoduleCfg: [],
-               userRemoteConfigs: [
-                 [url: 'https://github.com/melt-umn/ableC.git']
-               ]
-             ])
+    if (DOWNLOAD_ABLEC) {
+      checkout([ $class: 'GitSCM',
+                 branches: [[name: '*/develop']],
+                 doGenerateSubmoduleConfigurations: false,
+                 extensions: [
+                   [ $class: 'RelativeTargetDirectory',
+                     relativeTargetDir: ABLEC_BASE]
+                 ],
+                 submoduleCfg: [],
+                 userRemoteConfigs: [
+                   [url: 'https://github.com/melt-umn/ableC.git']
+                 ]
+               ])
+    }
     checkout([ $class: 'GitSCM',
                branches: [[name: '*/master']],
                doGenerateSubmoduleConfigurations: false,
                extensions: [
                  [ $class: 'RelativeTargetDirectory',
-                   relativeTargetDir: 'ableC/edu.umn.cs.melt.exts.ableC.sqlite']
+                   relativeTargetDir: '${ABLEC_BASE}/edu.umn.cs.melt.exts.ableC.sqlite']
                ],
                submoduleCfg: [],
                userRemoteConfigs: [
@@ -69,7 +89,7 @@ stage ("Build") {
 
     /* env.PATH is the master's path, not the executor's */
     withEnv(["PATH=${SILVER_BASE}/support/bin/:${env.PATH}"]) {
-      sh "cd ableC/edu.umn.cs.melt.exts.ableC.sqlite/artifact && ./build.sh"
+      sh "cd ${ABLEC_BASE}/edu.umn.cs.melt.exts.ableC.sqlite/artifact && ./build.sh"
     }
   }
 
