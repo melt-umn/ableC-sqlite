@@ -12,11 +12,7 @@ properties([
         name: 'SILVER_BASE',
         defaultValue: '/export/scratch/melt-jenkins/custom-silver/',
         description: 'Silver installation path to use. Currently assumes only one build machine. Otherwise a path is not sufficient, we need to copy artifacts or something else.'
-      ]
-    ]
-  ],
-  [ $class: 'ParametersDefinitionProperty',
-    parameterDefinitions: [
+      ],
       [ $class: 'StringParameterDefinition',
         name: 'ABLEC_BASE',
         defaultValue: 'ableC',
@@ -56,7 +52,7 @@ stage ("Build") {
                doGenerateSubmoduleConfigurations: false,
                extensions: [
                  [ $class: 'RelativeTargetDirectory',
-                   relativeTargetDir: ABLEC_BASE]
+                   relativeTargetDir: 'ableC']
                ],
                submoduleCfg: [],
                userRemoteConfigs: [
@@ -78,7 +74,7 @@ stage ("Build") {
 
     /* env.PATH is the master's path, not the executor's */
     withEnv(["PATH=${SILVER_BASE}/support/bin/:${env.PATH}"]) {
-      sh "cd ableC/edu.umn.cs.melt.exts.ableC.sqlite/artifact && ./build.sh"
+      sh "cd ${ABLEC_BASE}/edu.umn.cs.melt.exts.ableC.sqlite/artifact && ./build.sh"
     }
   }
 
