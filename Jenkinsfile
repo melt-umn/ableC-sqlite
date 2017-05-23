@@ -60,20 +60,18 @@ stage ("Build") {
 
   /* a node allocates an executor to actually do work */
   node {
-    when (DOWNLOAD_ABLEC) {
-      checkout([ $class: 'GitSCM',
-                 branches: [[name: '*/develop']],
-                 doGenerateSubmoduleConfigurations: false,
-                 extensions: [
-                   [ $class: 'RelativeTargetDirectory',
-                     relativeTargetDir: ABLEC_BASE]
-                 ],
-                 submoduleCfg: [],
-                 userRemoteConfigs: [
-                   [url: 'https://github.com/melt-umn/ableC.git']
-                 ]
-               ])
-    }
+    checkout([ $class: 'GitSCM',
+               branches: [[name: '*/develop']],
+               doGenerateSubmoduleConfigurations: false,
+               extensions: [
+                 [ $class: 'RelativeTargetDirectory',
+                   relativeTargetDir: ABLEC_BASE]
+               ],
+               submoduleCfg: [],
+               userRemoteConfigs: [
+                 [url: 'https://github.com/melt-umn/ableC.git']
+               ]
+             ])
     checkout([ $class: 'GitSCM',
                branches: [[name: '*/master']],
                doGenerateSubmoduleConfigurations: false,
