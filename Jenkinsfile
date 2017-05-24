@@ -81,7 +81,9 @@ stage ("Build") {
 
     /* env.PATH is the master's path, not the executor's */
     withEnv(["PATH=${SILVER_BASE}/support/bin/:${env.PATH}"]) {
-      sh "cd ${ABLEC_BASE}/edu.umn.cs.melt.exts.ableC.sqlite/artifact && ./build.sh"
+      dir("${ABLEC_BASE}/edu.umn.cs.melt.exts.ableC.sqlite/artifact") {
+        sh "./build.sh"
+      }
     }
   }
 
@@ -91,8 +93,12 @@ stage ("Modular Analyses") {
   node {
     withEnv(["PATH=${SILVER_BASE}/support/bin/:${env.PATH}"]) {
       def mdir = "ableC/edu.umn.cs.melt.exts.ableC.sqlite/modular_analyses"
-      sh "cd ${mdir}/determinism && ./run.sh"
-      sh "cd ${mdir}/well_definedness && ./run.sh"
+      dir("${mdir}/determinism") {
+        sh "./run.sh"
+      }
+      dir("${mdir}/well_definedness") {
+        sh "./run.sh"
+      }
     }
   }
 }
@@ -100,8 +106,12 @@ stage ("Modular Analyses") {
 stage ("Test") {
   node {
     def top_dir = "ableC/edu.umn.cs.melt.exts.ableC.sqlite"
-    sh "cd ${top_dir}/test/positive && ./the_tests.sh"
-    sh "cd ${top_dir}/test/negative && ./the_tests.sh"
+    dir("${top_dir}/test/positive") {
+      sh "./the_tests.sh"
+    }
+    dir("${top_dir}/test/negative") {
+      sh "./the_tests.sh"
+    }
   }
 }
 
