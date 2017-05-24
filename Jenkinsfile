@@ -44,8 +44,6 @@ properties([
 /* a node allocates an executor to actually do work */
 node {
 	try {
-		notifyBuild('STARTED')
-
     def ablec_base = (ABLEC_BASE == 'ableC') ? "${WORKSPACE}/ableC" : ABLEC_BASE
 
 		/* stages are pretty much just labels about what's going on */
@@ -109,9 +107,9 @@ node {
 		currentBuild.result = "FAILED"
 		throw e
 	} finally {
-//		if (currentBuild.result == "FAILED") {
+		if (currentBuild.result == "FAILED") {
 			notifyBuild(currentBuild.result)
-//		}
+		}
 	}
 }
 
@@ -148,8 +146,7 @@ def notifyBuild(String buildStatus = 'STARTED') {
   emailext(
       subject: subject,
       body: details,
-//			to: 'evw@umn.edu'
-			to: 'carl4980@umn.edu',
+			to: 'evw@umn.edu'
       recipientProviders: [[$class: 'CulpritsRecipientProvider']]
     )
 }
