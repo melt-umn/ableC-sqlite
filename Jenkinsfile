@@ -41,13 +41,15 @@ properties([
    parameters. */
 
 
-/* a node allocates an executor to actually do work */
-node {
-	try {
-//		notifyBuild('STARTED')
+/* stages are pretty much just labels about what's going on */
 
-		/* stages are pretty much just labels about what's going on */
-		stage ("Build") {
+stage ("Build") {
+
+  /* a node allocates an executor to actually do work */
+  node {
+    try {
+//			notifyBuild('STARTED')
+
 			checkout([ $class: 'GitSCM',
 								 branches: [[name: '*/develop']],
 								 doGenerateSubmoduleConfigurations: false,
@@ -79,9 +81,21 @@ node {
 					sh "./build.sh -I ${ABLEC_BASE}"
 				}
 			}
+    } catch (e) {
+//			currentBuild.result = "FAILED"
+			throw e
+//    } finally {
+//			if (currentBuild.result == "FAILED") {
+//				notifyBuild(currentBuild.result)
+//			}
 		}
+  }
 
-		stage ("Modular Analyses") {
+}
+
+stage ("Modular Analyses") {
+  node {
+    try {
 			withEnv(["PATH=${SILVER_BASE}/support/bin/:${env.PATH}"]) {
 				def mdir = "edu.umn.cs.melt.exts.ableC.sqlite/modular_analyses"
 				dir("${mdir}/determinism") {
@@ -91,9 +105,20 @@ node {
 					sh "./run.sh -I ${ABLEC_BASE}"
 				}
 			}
+    } catch (e) {
+//			currentBuild.result = "FAILED"
+			throw e
+//    } finally {
+//			if (currentBuild.result == "FAILED") {
+//				notifyBuild(currentBuild.result)
+			}
 		}
+  }
+}
 
-		stage ("Test") {
+stage ("Test") {
+  node {
+    try {
 			def top_dir = "edu.umn.cs.melt.exts.ableC.sqlite"
 			dir("${top_dir}/test/positive") {
 				sh "./the_tests.sh"
@@ -101,16 +126,15 @@ node {
 			dir("${top_dir}/test/negative") {
 				sh "./the_tests.sh"
 			}
+    } catch (e) {
+//			currentBuild.result = "FAILED"
+			throw e
+//    } finally {
+//			if (currentBuild.result == "FAILED") {
+//				notifyBuild(currentBuild.result)
+			}
 		}
-
-	} catch (e) {
-		currentBuild.result = "FAILED"
-		throw e
-	} finally {
-//		if (currentBuild.result == "FAILED") {
-//			notifyBuild(currentBuild.result)
-//		}
-	}
+  }
 }
 
 ///* Slack / email notification
@@ -150,4 +174,4 @@ node {
 //      recipientProviders: [[$class: 'CulpritsRecipientProvider']]
 //    )
 //}
-
+//
