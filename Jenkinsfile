@@ -15,7 +15,7 @@ properties([
       ],
       [ $class: 'StringParameterDefinition',
         name: 'ABLEC_BASE',
-        defaultValue: 'ableC',
+        defaultValue: "${WORKSPACE}/ableC",
         description: 'AbleC installation path to use.'
       ]
     ]
@@ -52,7 +52,7 @@ stage ("Build") {
                doGenerateSubmoduleConfigurations: false,
                extensions: [
                  [ $class: 'RelativeTargetDirectory',
-                   relativeTargetDir: 'ableC']
+                   relativeTargetDir: "${WORKSPACE}/ableC"]
                ],
                submoduleCfg: [],
                userRemoteConfigs: [
