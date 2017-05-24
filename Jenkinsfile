@@ -12,6 +12,11 @@ properties([
         name: 'SILVER_BASE',
         defaultValue: '/export/scratch/melt-jenkins/custom-silver/',
         description: 'Silver installation path to use. Currently assumes only one build machine. Otherwise a path is not sufficient, we need to copy artifacts or something else.'
+      ],
+      [ $class: 'StringParameterDefinition',
+        name: 'ABLEC_BASE',
+        defaultValue: 'ableC',
+        description: 'AbleC installation path to use.'
       ]
     ]
   ],
@@ -59,7 +64,7 @@ stage ("Build") {
                doGenerateSubmoduleConfigurations: false,
                extensions: [
                  [ $class: 'RelativeTargetDirectory',
-                   relativeTargetDir: 'ableC/edu.umn.cs.melt.exts.ableC.sqlite']
+                   relativeTargetDir: "edu.umn.cs.melt.exts.ableC.sqlite"]
                ],
                submoduleCfg: [],
                userRemoteConfigs: [
@@ -69,7 +74,9 @@ stage ("Build") {
 
     /* env.PATH is the master's path, not the executor's */
     withEnv(["PATH=${SILVER_BASE}/support/bin/:${env.PATH}"]) {
-      sh "cd ableC/edu.umn.cs.melt.exts.ableC.sqlite/artifact && ./build.sh"
+      dir("edu.umn.cs.melt.exts.ableC.sqlite/artifact") {
+        sh "./build.sh -I ${ABLEC_BASE}"
+      }
     }
   }
 
@@ -78,18 +85,26 @@ stage ("Build") {
 stage ("Modular Analyses") {
   node {
     withEnv(["PATH=${SILVER_BASE}/support/bin/:${env.PATH}"]) {
-      def mdir = "ableC/edu.umn.cs.melt.exts.ableC.sqlite/modular_analyses"
-      sh "cd ${mdir}/determinism && ./run.sh"
-      sh "cd ${mdir}/well_definedness && ./run.sh"
+      def mdir = "edu.umn.cs.melt.exts.ableC.sqlite/modular_analyses"
+      dir("${mdir}/determinism") {
+        sh "./run.sh -I ${ABLEC_BASE}"
+      }
+      dir("${mdir}/well_definedness") {
+        sh "./run.sh -I ${ABLEC_BASE}"
+      }
     }
   }
 }
 
 stage ("Test") {
   node {
-    def top_dir = "ableC/edu.umn.cs.melt.exts.ableC.sqlite"
-    sh "cd ${top_dir}/test/positive && ./the_tests.sh"
-    sh "cd ${top_dir}/test/negative && ./the_tests.sh"
+    def top_dir = "edu.umn.cs.melt.exts.ableC.sqlite"
+    dir("${top_dir}/test/positive") {
+      sh "./the_tests.sh"
+    }
+    dir("${top_dir}/test/negative") {
+      sh "./the_tests.sh"
+    }
   }
 }
 
