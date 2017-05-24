@@ -41,72 +41,115 @@ properties([
    parameters. */
 
 
-/* stages are pretty much just labels about what's going on */
+/* a node allocates an executor to actually do work */
+node {
+	try {
+		notifyBuild('STARTED')
 
-stage ("Build") {
+    def ablec_base = (ABLEC_BASE == 'ableC') ? "${WORKSPACE}/ableC" : ABLEC_BASE
 
-  /* a node allocates an executor to actually do work */
-  node {
-    checkout([ $class: 'GitSCM',
-               branches: [[name: '*/develop']],
-               doGenerateSubmoduleConfigurations: false,
-               extensions: [
-                 [ $class: 'RelativeTargetDirectory',
-                   relativeTargetDir: "ableC"]
-               ],
-               submoduleCfg: [],
-               userRemoteConfigs: [
-                 [url: 'https://github.com/melt-umn/ableC.git']
-               ]
-             ])
-    checkout([ $class: 'GitSCM',
-               branches: [[name: '*/master']],
-               doGenerateSubmoduleConfigurations: false,
-               extensions: [
-                 [ $class: 'RelativeTargetDirectory',
-                   relativeTargetDir: "edu.umn.cs.melt.exts.ableC.sqlite"]
-               ],
-               submoduleCfg: [],
-               userRemoteConfigs: [
-                 [url: 'https://github.com/melt-umn/edu.umn.cs.melt.exts.ableC.sqlite.git']
-               ]
-             ])
+		/* stages are pretty much just labels about what's going on */
+		stage ("Build") {
+			checkout([ $class: 'GitSCM',
+								 branches: [[name: '*/develop']],
+								 doGenerateSubmoduleConfigurations: false,
+								 extensions: [
+									 [ $class: 'RelativeTargetDirectory',
+										 relativeTargetDir: "ableC"]
+								 ],
+								 submoduleCfg: [],
+								 userRemoteConfigs: [
+									 [url: 'https://github.com/melt-umn/ableC.git']
+								 ]
+							 ])
+			checkout([ $class: 'GitSCM',
+								 branches: [[name: '*/master']],
+								 doGenerateSubmoduleConfigurations: false,
+								 extensions: [
+									 [ $class: 'RelativeTargetDirectory',
+										 relativeTargetDir: "edu.umn.cs.melt.exts.ableC.sqlite"]
+								 ],
+								 submoduleCfg: [],
+								 userRemoteConfigs: [
+									 [url: 'https://github.com/melt-umn/edu.umn.cs.melt.exts.ableC.sqlite.git']
+								 ]
+							 ])
 
-    /* env.PATH is the master's path, not the executor's */
-    withEnv(["PATH=${SILVER_BASE}/support/bin/:${env.PATH}"]) {
-      def ablec_base = (ABLEC_BASE == 'ableC') ? "${WORKSPACE}/ableC" : ABLEC_BASE
-      dir("edu.umn.cs.melt.exts.ableC.sqlite/artifact") {
-        sh "./build.sh -I ${ablec_base}"
-      }
-    }
-  }
+			/* env.PATH is the master's path, not the executor's */
+			withEnv(["PATH=${SILVER_BASE}/support/bin/:${env.PATH}"]) {
+				dir("edu.umn.cs.melt.exts.ableC.sqlite/artifact") {
+					sh "./build.sh -I ${ablec_base}"
+				}
+			}
+		}
 
+		stage ("Modular Analyses") {
+			withEnv(["PATH=${SILVER_BASE}/support/bin/:${env.PATH}"]) {
+				def mdir = "edu.umn.cs.melt.exts.ableC.sqlite/modular_analyses"
+				dir("${mdir}/determinism") {
+					sh "./run.sh -I ${ablec_base}"
+				}
+				dir("${mdir}/well_definedness") {
+					sh "./run.sh -I ${ablec_base}"
+				}
+			}
+		}
+
+		stage ("Test") {
+			def top_dir = "edu.umn.cs.melt.exts.ableC.sqlite"
+			dir("${top_dir}/test/positive") {
+				sh "./the_tests.sh"
+			}
+			dir("${top_dir}/test/negative") {
+				sh "./the_tests.sh"
+			}
+		}
+
+	} catch (e) {
+		currentBuild.result = "FAILED"
+		throw e
+	} finally {
+//		if (currentBuild.result == "FAILED") {
+			notifyBuild(currentBuild.result)
+//		}
+	}
 }
 
-stage ("Modular Analyses") {
-  node {
-    withEnv(["PATH=${SILVER_BASE}/support/bin/:${env.PATH}"]) {
-      def ablec_base = (ABLEC_BASE == 'ableC') ? "${WORKSPACE}/ableC" : ABLEC_BASE
-      def mdir = "edu.umn.cs.melt.exts.ableC.sqlite/modular_analyses"
-      dir("${mdir}/determinism") {
-        sh "./run.sh -I ${ablec_base}"
-      }
-      dir("${mdir}/well_definedness") {
-        sh "./run.sh -I ${ablec_base}"
-      }
-    }
-  }
-}
+/* Slack / email notification
+ * notifyBuild() author: fahl-design
+ * https://bitbucket.org/snippets/fahl-design/koxKe */
+def notifyBuild(String buildStatus = 'STARTED') {
+  // build status of null means successful
+  buildStatus =  buildStatus ?: 'SUCCESSFUL'
 
-stage ("Test") {
-  node {
-    def top_dir = "edu.umn.cs.melt.exts.ableC.sqlite"
-    dir("${top_dir}/test/positive") {
-      sh "./the_tests.sh"
-    }
-    dir("${top_dir}/test/negative") {
-      sh "./the_tests.sh"
-    }
+  // Default values
+  def colorName = 'RED'
+  def colorCode = '#FF0000'
+  def subject = "${buildStatus}: Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]'"
+  def summary = "${subject} (${env.BUILD_URL})"
+  def details = """<p>STARTED: Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]':</p>
+    <p>Check console output at &QUOT;<a href='${env.BUILD_URL}'>${env.JOB_NAME} [${env.BUILD_NUMBER}]</a>&QUOT;</p>"""
+
+  // Override default values based on build status
+  if (buildStatus == 'STARTED') {
+    color = 'YELLOW'
+    colorCode = '#FFFF00'
+  } else if (buildStatus == 'SUCCESSFUL') {
+    color = 'GREEN'
+    colorCode = '#00FF00'
+  } else {
+    color = 'RED'
+    colorCode = '#FF0000'
   }
+
+  // Send notifications
+  slackSend (color: colorCode, message: summary)
+
+  emailext(
+      subject: subject,
+      body: details,
+//			to: 'evw@umn.edu'
+      recipientProviders: [[$class: 'CulpritsRecipientProvider']]
+    )
 }
 
