@@ -17,11 +17,6 @@ properties([
         name: 'ABLEC_BASE',
         defaultValue: 'ableC',
         description: 'AbleC installation path to use.'
-      ],
-      [ $class: 'BooleanParameterDefinition',
-        name: 'DOWNLOAD_ABLEC',
-        defaultValue: true,
-        description: 'AbleC installation path to use.'
       ]
     ]
   ],
@@ -52,26 +47,24 @@ stage ("Build") {
 
   /* a node allocates an executor to actually do work */
   node {
-    if (DOWNLOAD_ABLEC) {
-      checkout([ $class: 'GitSCM',
-                 branches: [[name: '*/develop']],
-                 doGenerateSubmoduleConfigurations: false,
-                 extensions: [
-                   [ $class: 'RelativeTargetDirectory',
-                     relativeTargetDir: ABLEC_BASE]
-                 ],
-                 submoduleCfg: [],
-                 userRemoteConfigs: [
-                   [url: 'https://github.com/melt-umn/ableC.git']
-                 ]
-               ])
-    }
+    checkout([ $class: 'GitSCM',
+               branches: [[name: '*/develop']],
+               doGenerateSubmoduleConfigurations: false,
+               extensions: [
+                 [ $class: 'RelativeTargetDirectory',
+                   relativeTargetDir: 'ableC']
+               ],
+               submoduleCfg: [],
+               userRemoteConfigs: [
+                 [url: 'https://github.com/melt-umn/ableC.git']
+               ]
+             ])
     checkout([ $class: 'GitSCM',
                branches: [[name: '*/master']],
                doGenerateSubmoduleConfigurations: false,
                extensions: [
                  [ $class: 'RelativeTargetDirectory',
-                   relativeTargetDir: "${ABLEC_BASE}/edu.umn.cs.melt.exts.ableC.sqlite"]
+                   relativeTargetDir: "edu.umn.cs.melt.exts.ableC.sqlite"]
                ],
                submoduleCfg: [],
                userRemoteConfigs: [
@@ -81,8 +74,8 @@ stage ("Build") {
 
     /* env.PATH is the master's path, not the executor's */
     withEnv(["PATH=${SILVER_BASE}/support/bin/:${env.PATH}"]) {
-      dir("${ABLEC_BASE}/edu.umn.cs.melt.exts.ableC.sqlite/artifact") {
-        sh "./build.sh"
+      dir("edu.umn.cs.melt.exts.ableC.sqlite/artifact") {
+        sh "./build.sh -I ${ABLEC_BASE}"
       }
     }
   }
@@ -92,12 +85,12 @@ stage ("Build") {
 stage ("Modular Analyses") {
   node {
     withEnv(["PATH=${SILVER_BASE}/support/bin/:${env.PATH}"]) {
-      def mdir = "ableC/edu.umn.cs.melt.exts.ableC.sqlite/modular_analyses"
+      def mdir = "edu.umn.cs.melt.exts.ableC.sqlite/modular_analyses"
       dir("${mdir}/determinism") {
-        sh "./run.sh"
+        sh "./run.sh -I ${ABLEC_BASE}"
       }
       dir("${mdir}/well_definedness") {
-        sh "./run.sh"
+        sh "./run.sh -I ${ABLEC_BASE}"
       }
     }
   }
@@ -105,7 +98,7 @@ stage ("Modular Analyses") {
 
 stage ("Test") {
   node {
-    def top_dir = "ableC/edu.umn.cs.melt.exts.ableC.sqlite"
+    def top_dir = "edu.umn.cs.melt.exts.ableC.sqlite"
     dir("${top_dir}/test/positive") {
       sh "./the_tests.sh"
     }
