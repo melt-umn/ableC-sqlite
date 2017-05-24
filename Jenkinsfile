@@ -12,11 +12,6 @@ properties([
         name: 'SILVER_BASE',
         defaultValue: '/export/scratch/melt-jenkins/custom-silver/',
         description: 'Silver installation path to use. Currently assumes only one build machine. Otherwise a path is not sufficient, we need to copy artifacts or something else.'
-      ],
-      [ $class: 'StringParameterDefinition',
-        name: 'ABLEC_BASE',
-        defaultValue: "${WORKSPACE}/ableC",
-        description: 'AbleC installation path to use.'
       ]
     ]
   ],
@@ -78,7 +73,7 @@ stage ("Build") {
 			/* env.PATH is the master's path, not the executor's */
 			withEnv(["PATH=${SILVER_BASE}/support/bin/:${env.PATH}"]) {
 				dir("edu.umn.cs.melt.exts.ableC.sqlite/artifact") {
-					sh "./build.sh -I ${ABLEC_BASE}"
+					sh "./build.sh -I ${WORKSPACE}/ableC"
 				}
 			}
     } catch (e) {
@@ -99,10 +94,10 @@ stage ("Modular Analyses") {
 			withEnv(["PATH=${SILVER_BASE}/support/bin/:${env.PATH}"]) {
 				def mdir = "edu.umn.cs.melt.exts.ableC.sqlite/modular_analyses"
 				dir("${mdir}/determinism") {
-					sh "./run.sh -I ${ABLEC_BASE}"
+					sh "./run.sh -I ${WORKSPACE}/ableC"
 				}
 				dir("${mdir}/well_definedness") {
-					sh "./run.sh -I ${ABLEC_BASE}"
+					sh "./run.sh -I ${WORKSPACE}/ableC"
 				}
 			}
     } catch (e) {
