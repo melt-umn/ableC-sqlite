@@ -15,7 +15,7 @@ properties([
       ],
       [ $class: 'StringParameterDefinition',
         name: 'ABLEC_BASE',
-        defaultValue: "${WORKSPACE}/ableC",
+        defaultValue: "ableC",
         description: 'AbleC installation path to use.'
       ]
     ]
@@ -52,7 +52,7 @@ stage ("Build") {
                doGenerateSubmoduleConfigurations: false,
                extensions: [
                  [ $class: 'RelativeTargetDirectory',
-                   relativeTargetDir: "${WORKSPACE}/ableC"]
+                   relativeTargetDir: "ableC"]
                ],
                submoduleCfg: [],
                userRemoteConfigs: [
@@ -74,8 +74,9 @@ stage ("Build") {
 
     /* env.PATH is the master's path, not the executor's */
     withEnv(["PATH=${SILVER_BASE}/support/bin/:${env.PATH}"]) {
+      def ablec_base = (ABLEC_BASE == 'ableC') ? "${WORKSPACE}/ableC" : ABLEC_BASE
       dir("edu.umn.cs.melt.exts.ableC.sqlite/artifact") {
-        sh "./build.sh -I ${ABLEC_BASE}"
+        sh "./build.sh -I ${ablec_base}"
       }
     }
   }
@@ -85,12 +86,13 @@ stage ("Build") {
 stage ("Modular Analyses") {
   node {
     withEnv(["PATH=${SILVER_BASE}/support/bin/:${env.PATH}"]) {
+      def ablec_base = (ABLEC_BASE == 'ableC') ? "${WORKSPACE}/ableC" : ABLEC_BASE
       def mdir = "edu.umn.cs.melt.exts.ableC.sqlite/modular_analyses"
       dir("${mdir}/determinism") {
-        sh "./run.sh -I ${ABLEC_BASE}"
+        sh "./run.sh -I ${ablec_base}"
       }
       dir("${mdir}/well_definedness") {
-        sh "./run.sh -I ${ABLEC_BASE}"
+        sh "./run.sh -I ${ablec_base}"
       }
     }
   }
