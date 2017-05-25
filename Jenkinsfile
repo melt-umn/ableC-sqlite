@@ -62,11 +62,13 @@ node {
 							 ])
 			checkout([ $class: 'GitSCM',
                   branches: scm.branches,
+								  doGenerateSubmoduleConfigurations: scm.doGenerateSubmoduleConfigurations,
                   extensions: scm.extensions +
                               [[$class: 'RelativeTargetDirectory',
                                  relativeTargetDir: "edu.umn.cs.melt.exts.ableC.sqlite"]],
+								  submoduleCfg: scm.submoduleCfg,
                   userRemoteConfigs: scm.userRemoteConfigs
-			])
+              ])
 
 			/* env.PATH is the master's path, not the executor's */
 			withEnv(["PATH=${SILVER_BASE}/support/bin/:${env.PATH}"]) {
@@ -99,10 +101,10 @@ node {
 		}
 
 	} catch (e) {
-		currentBuild.result = "FAILED"
+		currentBuild.result = "FAILURE"
 		throw e
 	} finally {
-		if (currentBuild.result == "FAILED") {
+		if (currentBuild.result == "FAILURE") {
 			notifyBuild(currentBuild.result)
 		}
 	}
@@ -141,7 +143,7 @@ def notifyBuild(String buildStatus = 'STARTED') {
   emailext(
       subject: subject,
       body: details,
-			to: 'evw@umn.edu',
+//			to: 'evw@umn.edu',
       recipientProviders: [[$class: 'CulpritsRecipientProvider']]
     )
 }
