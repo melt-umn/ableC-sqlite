@@ -48,7 +48,6 @@ node {
 
 		/* stages are pretty much just labels about what's going on */
 		stage ("Build") {
-			checkout scm
 			checkout([ $class: 'GitSCM',
 								 branches: [[name: '*/develop']],
 								 doGenerateSubmoduleConfigurations: false,
@@ -61,10 +60,22 @@ node {
 									 [url: 'https://github.com/melt-umn/ableC.git']
 								 ]
 							 ])
+			checkout([ $class: 'GitSCM',
+								 branches: [[name: '*/master']],
+								 doGenerateSubmoduleConfigurations: false,
+								 extensions: [
+									 [ $class: 'RelativeTargetDirectory',
+										 relativeTargetDir: "edu.umn.cs.melt.exts.ableC.sqlite"]
+								 ],
+								 submoduleCfg: [],
+								 userRemoteConfigs: [
+									 [url: 'https://github.com/melt-umn/edu.umn.cs.melt.exts.ableC.sqlite.git']
+								 ]
+							 ])
 
 			/* env.PATH is the master's path, not the executor's */
 			withEnv(["PATH=${SILVER_BASE}/support/bin/:${env.PATH}"]) {
-				dir("artifact") {
+				dir("edu.umn.cs.melt.exts.ableC.sqlite/artifact") {
 					sh "./build.sh -I ${ablec_base}"
 				}
 			}
@@ -72,7 +83,7 @@ node {
 
 		stage ("Modular Analyses") {
 			withEnv(["PATH=${SILVER_BASE}/support/bin/:${env.PATH}"]) {
-				def mdir = "modular_analyses"
+				def mdir = "edu.umn.cs.melt.exts.ableC.sqlite/modular_analyses"
 				dir("${mdir}/determinism") {
 					sh "./run.sh -I ${ablec_base}"
 				}
@@ -83,19 +94,20 @@ node {
 		}
 
 		stage ("Test") {
-			dir("test/positive") {
+			def top_dir = "edu.umn.cs.melt.exts.ableC.sqlite"
+			dir("${top_dir}/test/positive") {
 				sh "./the_tests.sh"
 			}
-			dir("test/negative") {
+			dir("${top_dir}/test/negative") {
 				sh "./the_tests.sh"
 			}
 		}
 
 	} catch (e) {
-		currentBuild.result = "FAILURE"
+		currentBuild.result = "FAILED"
 		throw e
 	} finally {
-		if (currentBuild.result == "FAILURE") {
+		if (currentBuild.result == "FAILED") {
 			notifyBuild(currentBuild.result)
 		}
 	}
@@ -134,7 +146,7 @@ def notifyBuild(String buildStatus = 'STARTED') {
   emailext(
       subject: subject,
       body: details,
-//			to: 'evw@umn.edu',
+			to: 'evw@umn.edu',
       recipientProviders: [[$class: 'CulpritsRecipientProvider']]
     )
 }
