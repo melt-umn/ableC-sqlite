@@ -48,6 +48,7 @@ node {
 
 		/* stages are pretty much just labels about what's going on */
 		stage ("Build") {
+			checkout scm
 			checkout([ $class: 'GitSCM',
 								 branches: [[name: '*/develop']],
 								 doGenerateSubmoduleConfigurations: false,
@@ -60,7 +61,6 @@ node {
 									 [url: 'https://github.com/melt-umn/ableC.git']
 								 ]
 							 ])
-			checkout scm
 
 			/* env.PATH is the master's path, not the executor's */
 			withEnv(["PATH=${SILVER_BASE}/support/bin/:${env.PATH}"]) {
