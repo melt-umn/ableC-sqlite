@@ -60,18 +60,14 @@ node {
 									 [url: 'https://github.com/melt-umn/ableC.git']
 								 ]
 							 ])
-			checkout([ $class: 'GitSCM',
-								 branches: [[name: '*/master']],
-								 doGenerateSubmoduleConfigurations: false,
-								 extensions: [
-									 [ $class: 'RelativeTargetDirectory',
-										 relativeTargetDir: "edu.umn.cs.melt.exts.ableC.sqlite"]
-								 ],
-								 submoduleCfg: [],
-								 userRemoteConfigs: [
-									 [url: 'https://github.com/melt-umn/edu.umn.cs.melt.exts.ableC.sqlite.git']
-								 ]
-							 ])
+			checkout([
+					$class: 'GitSCM',
+					branches: scm.branches,
+					extensions: scm.extensions +
+                      [[$class: 'RelativeTargetDirectory',
+                         relativeTargetDir: "edu.umn.cs.melt.exts.ableC.sqlite"]]
+					userRemoteConfigs: scm.userRemoteConfigs
+			])
 
 			/* env.PATH is the master's path, not the executor's */
 			withEnv(["PATH=${SILVER_BASE}/support/bin/:${env.PATH}"]) {
