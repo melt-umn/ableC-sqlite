@@ -60,13 +60,12 @@ node {
 									 [url: 'https://github.com/melt-umn/ableC.git']
 								 ]
 							 ])
-			checkout([
-					$class: 'GitSCM',
-					branches: scm.branches,
-					extensions: scm.extensions +
-                      [[$class: 'RelativeTargetDirectory',
-                         relativeTargetDir: "edu.umn.cs.melt.exts.ableC.sqlite"]]
-					userRemoteConfigs: scm.userRemoteConfigs
+			checkout([ $class: 'GitSCM',
+                  branches: scm.branches,
+                  extensions: scm.extensions +
+                              [[$class: 'RelativeTargetDirectory',
+                                 relativeTargetDir: "edu.umn.cs.melt.exts.ableC.sqlite"]],
+                  userRemoteConfigs: scm.userRemoteConfigs
 			])
 
 			/* env.PATH is the master's path, not the executor's */
