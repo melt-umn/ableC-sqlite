@@ -60,19 +60,11 @@ node {
 									 [url: 'https://github.com/melt-umn/ableC.git']
 								 ]
 							 ])
-			checkout([ $class: 'GitSCM',
-                  branches: scm.branches,
-								  doGenerateSubmoduleConfigurations: scm.doGenerateSubmoduleConfigurations,
-                  extensions: scm.extensions +
-                              [[$class: 'RelativeTargetDirectory',
-                                 relativeTargetDir: "edu.umn.cs.melt.exts.ableC.sqlite"]],
-								  submoduleCfg: scm.submoduleCfg,
-                  userRemoteConfigs: scm.userRemoteConfigs
-              ])
+			checkout scm
 
 			/* env.PATH is the master's path, not the executor's */
 			withEnv(["PATH=${SILVER_BASE}/support/bin/:${env.PATH}"]) {
-				dir("edu.umn.cs.melt.exts.ableC.sqlite/artifact") {
+				dir("artifact") {
 					sh "./build.sh -I ${ablec_base}"
 				}
 			}
@@ -80,7 +72,7 @@ node {
 
 		stage ("Modular Analyses") {
 			withEnv(["PATH=${SILVER_BASE}/support/bin/:${env.PATH}"]) {
-				def mdir = "edu.umn.cs.melt.exts.ableC.sqlite/modular_analyses"
+				def mdir = "modular_analyses"
 				dir("${mdir}/determinism") {
 					sh "./run.sh -I ${ablec_base}"
 				}
@@ -91,11 +83,10 @@ node {
 		}
 
 		stage ("Test") {
-			def top_dir = "edu.umn.cs.melt.exts.ableC.sqlite"
-			dir("${top_dir}/test/positive") {
+			dir("test/positive") {
 				sh "./the_tests.sh"
 			}
-			dir("${top_dir}/test/negative") {
+			dir("test/negative") {
 				sh "./the_tests.sh"
 			}
 		}
