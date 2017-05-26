@@ -108,6 +108,7 @@ node {
 		throw e
 	} finally {
     def previousResult = currentBuild.previousBuild?.result
+    print previousResult
 
 		if (currentBuild.result == 'FAILURE') {
 			notifyBuild(currentBuild.result)
