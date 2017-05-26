@@ -79,6 +79,9 @@ node {
 					sh "./build.sh -I ${ablec_base}"
 				}
 			}
+
+      def previousResult = currentBuild.previousBuild?.result
+      print previousResult
 		}
 
 		stage ("Modular Analyses") {
@@ -108,7 +111,6 @@ node {
 		throw e
 	} finally {
     def previousResult = currentBuild.previousBuild?.result
-    print previousResult
 
 		if (currentBuild.result == 'FAILURE') {
 			notifyBuild(currentBuild.result)
