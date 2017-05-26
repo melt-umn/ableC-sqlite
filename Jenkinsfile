@@ -61,7 +61,7 @@ node {
 								 ]
 							 ])
 			checkout([ $class: 'GitSCM',
-								 branches: scm.branches
+								 branches: scm.branches,
 								 doGenerateSubmoduleConfigurations: false,
 								 extensions: [
 									 [ $class: 'RelativeTargetDirectory',
