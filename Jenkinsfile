@@ -76,7 +76,7 @@ node {
 			/* env.PATH is the master's path, not the executor's */
 			withEnv(["PATH=${SILVER_BASE}/support/bin/:${env.PATH}"]) {
 				dir("edu.umn.cs.melt.exts.ableC.sqlite/artifact") {
-					sh "./build.sh -I ${ablec_base}"
+					sh "./fail-build.sh -I ${ablec_base}"
 				}
 			}
 
