@@ -60,8 +60,11 @@ node {
 									 [url: 'https://github.com/melt-umn/ableC.git']
 								 ]
 							 ])
+      /* FIXME: don't hardcode master branch */
 			checkout([ $class: 'GitSCM',
-								 branches: scm.branches,
+                 /* why doesn't scm.branches work? */
+								 //branches: scm.branches,
+								 branches: [[name: '*/master']],
 								 doGenerateSubmoduleConfigurations: false,
 								 extensions: [
 									 [ $class: 'RelativeTargetDirectory',
