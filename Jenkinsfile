@@ -76,12 +76,9 @@ node {
 			/* env.PATH is the master's path, not the executor's */
 			withEnv(["PATH=${SILVER_BASE}/support/bin/:${env.PATH}"]) {
 				dir("edu.umn.cs.melt.exts.ableC.sqlite/artifact") {
-					sh "./build.sh -I ${ablec_base}"
+					sh "./fail-build.sh -I ${ablec_base}"
 				}
 			}
-
-      def previousResult = currentBuild.previousBuild?.result
-      print previousResult
 		}
 
 		stage ("Modular Analyses") {
@@ -114,7 +111,7 @@ node {
 
 		if (currentBuild.result == 'FAILURE') {
 			notifyBuild(currentBuild.result)
-		} else if (currentBuild.result == 'SUCCESSFUL' &&
+		} else if (currentBuild.result == null &&
         previousResult && previousResult == 'FAILURE') {
 			notifyBuild('BACK_TO_NORMAL')
     }
