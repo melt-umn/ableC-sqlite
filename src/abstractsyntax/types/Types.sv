@@ -9,17 +9,17 @@ import edu:umn:cs:melt:ableC:abstractsyntax:overload;
 abstract production sqliteDbTypeExpr
 top::BaseTypeExpr ::= tables::[tbls:SqliteTable]
 {
-  top.typerep = sqliteDbType([], tables);
+  top.typerep = sqliteDbType(nilQualifier(), tables);
 
   forwards to
     typedefTypeExpr(
-      [],
+      nilQualifier(),
       name("_sqlite_db", location=builtIn())
     );
 }
 
 abstract production sqliteDbType
-top::Type ::= qs::[Qualifier] tables::[tbls:SqliteTable]
+top::Type ::= qs::Qualifiers tables::[tbls:SqliteTable]
 {
   forwards to
     noncanonicalType(
@@ -27,9 +27,9 @@ top::Type ::= qs::[Qualifier] tables::[tbls:SqliteTable]
         qs,
         "_sqlite_db",
         pointerType(
-          [],
+          nilQualifier(),
           tagType(
-            [],
+            nilQualifier(),
             refIdTagType(
               structSEU(),
               "_sqlite_db_s",
@@ -44,17 +44,17 @@ top::Type ::= qs::[Qualifier] tables::[tbls:SqliteTable]
 abstract production sqliteQueryTypeExpr
 top::BaseTypeExpr ::= columns::[abs:SqliteColumn]
 {
-  top.typerep = sqliteQueryType([], columns);
+  top.typerep = sqliteQueryType(nilQualifier(), columns);
 
   forwards to
     typedefTypeExpr(
-      [],
+      nilQualifier(),
       name("_sqlite_query", location=builtIn())
     );
 }
 
 abstract production sqliteQueryType
-top::Type ::= qs::[Qualifier] columns::[abs:SqliteColumn]
+top::Type ::= qs::Qualifiers columns::[abs:SqliteColumn]
 {
   forwards to
     noncanonicalType(
@@ -62,9 +62,9 @@ top::Type ::= qs::[Qualifier] columns::[abs:SqliteColumn]
         qs,
         "_sqlite_query",
         pointerType(
-          [],
+          nilQualifier(),
           tagType(
-            [],
+            nilQualifier(),
             refIdTagType(
               structSEU(),
               "_sqlite_query_s",

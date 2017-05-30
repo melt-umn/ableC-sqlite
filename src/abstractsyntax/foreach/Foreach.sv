@@ -80,7 +80,7 @@ top::Stmt ::= row::Name query::Expr body::Stmt
   -- struct { <column declarations> }
   local rowTypeExpr :: BaseTypeExpr =
     structTypeExpr(
-      [constQualifier()],
+      foldQualifier([constQualifier()]),
       structDecl(
         nilAttribute(),
         nothingName(),
@@ -163,13 +163,13 @@ StructItem ::= col::SqliteColumn
   local typeExpr :: BaseTypeExpr =
     case col.typ of
       sqliteVarchar() ->
-        directTypeExpr(builtinType([constQualifier()], unsignedType(charType())))
+        directTypeExpr(builtinType(foldQualifier([constQualifier()]), unsignedType(charType())))
     | sqliteInteger() ->
-        directTypeExpr(builtinType([], signedType(intType())))
+        directTypeExpr(builtinType(nilQualifier(), signedType(intType())))
     end;
   local mod :: TypeModifierExpr =
     case col.typ of
-      sqliteVarchar() -> pointerTypeExpr([], baseTypeExpr())
+      sqliteVarchar() -> pointerTypeExpr(nilQualifier(), baseTypeExpr())
     | sqliteInteger() -> baseTypeExpr()
     end;
 

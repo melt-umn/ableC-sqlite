@@ -49,7 +49,8 @@ node {
 		/* stages are pretty much just labels about what's going on */
 		stage ("Build") {
 			checkout([ $class: 'GitSCM',
-								 branches: [[name: '*/develop']],
+//								 branches: [[name: '*/develop']],
+								 branches: [[name: '*/feature/type_qualifiers']],
 								 doGenerateSubmoduleConfigurations: false,
 								 extensions: [
 									 [ $class: 'RelativeTargetDirectory',
@@ -64,7 +65,8 @@ node {
 			checkout([ $class: 'GitSCM',
                  /* why doesn't scm.branches work? */
 								 //branches: scm.branches,
-								 branches: [[name: '*/master']],
+//								 branches: [[name: '*/master']],
+								 branches: [[name: '*/feature/type_qualifiers']],
 								 doGenerateSubmoduleConfigurations: false,
 								 extensions: [
 									 [ $class: 'RelativeTargetDirectory',
@@ -154,7 +156,7 @@ def notifyBuild(String buildStatus = 'STARTED') {
   emailext(
       subject: subject,
       body: details,
-			to: 'evw@umn.edu',
+//			to: 'evw@umn.edu',
       recipientProviders: [[$class: 'CulpritsRecipientProvider']]
     )
 }
