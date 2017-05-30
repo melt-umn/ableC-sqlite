@@ -70,7 +70,6 @@ node {
 								 ],
 								 submoduleCfg: scm.submoduleCfg,
 								 userRemoteConfigs: scm.userRemoteConfigs
-								 ]
 							 ])
 
 			/* env.PATH is the master's path, not the executor's */
