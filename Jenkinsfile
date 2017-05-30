@@ -63,10 +63,9 @@ node {
 							 ])
       /* FIXME: don't hardcode master branch */
 			checkout([ $class: 'GitSCM',
-                 /* why doesn't scm.branches work? */
-								 //branches: scm.branches,
+								 branches: scm.branches,
 //								 branches: [[name: '*/master']],
-								 branches: [[name: '*/feature/type_qualifiers']],
+//								 branches: [[name: '*/feature/type_qualifiers']],
 								 doGenerateSubmoduleConfigurations: false,
 								 extensions: [
 									 [ $class: 'RelativeTargetDirectory',
