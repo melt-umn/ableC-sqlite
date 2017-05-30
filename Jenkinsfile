@@ -61,19 +61,15 @@ node {
 									 [url: 'https://github.com/melt-umn/ableC.git']
 								 ]
 							 ])
-      /* FIXME: don't hardcode master branch */
 			checkout([ $class: 'GitSCM',
 								 branches: scm.branches,
-//								 branches: [[name: '*/master']],
-//								 branches: [[name: '*/feature/type_qualifiers']],
-								 doGenerateSubmoduleConfigurations: false,
+								 doGenerateSubmoduleConfigurations: scm.doGenerateSubmoduleConfigurations,
 								 extensions: [
 									 [ $class: 'RelativeTargetDirectory',
 										 relativeTargetDir: "edu.umn.cs.melt.exts.ableC.sqlite"]
 								 ],
-								 submoduleCfg: [],
-								 userRemoteConfigs: [
-									 [url: 'https://github.com/melt-umn/edu.umn.cs.melt.exts.ableC.sqlite.git']
+								 submoduleCfg: scm.submoduleCfg,
+								 userRemoteConfigs: scm.userRemoteConfigs
 								 ]
 							 ])
 
