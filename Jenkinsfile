@@ -44,7 +44,7 @@ properties([
 /* a node allocates an executor to actually do work */
 node {
 	try {
-    def ablec_base = (ABLEC_BASE == 'ableC') ? "${WORKSPACE}/ableC" : ABLEC_BASE
+    def ablec_base = (params.ABLEC_BASE == 'ableC') ? "${WORKSPACE}/ableC" : params.ABLEC_BASE
 
 		/* stages are pretty much just labels about what's going on */
 		stage ("Build") {
@@ -73,7 +73,7 @@ node {
 							 ])
 
 			/* env.PATH is the master's path, not the executor's */
-			withEnv(["PATH=${SILVER_BASE}/support/bin/:${env.PATH}"]) {
+			withEnv(["PATH=${params.SILVER_BASE}/support/bin/:${env.PATH}"]) {
 				dir("edu.umn.cs.melt.exts.ableC.sqlite/artifact") {
 					sh "./build.sh -I ${ablec_base} -G ${WORKSPACE}"
 				}
@@ -81,7 +81,7 @@ node {
 		}
 
 		stage ("Modular Analyses") {
-			withEnv(["PATH=${SILVER_BASE}/support/bin/:${env.PATH}"]) {
+			withEnv(["PATH=${params.SILVER_BASE}/support/bin/:${env.PATH}"]) {
 				def mdir = "edu.umn.cs.melt.exts.ableC.sqlite/modular_analyses"
 				dir("${mdir}/determinism") {
 					sh "./run.sh -I ${ablec_base}"
