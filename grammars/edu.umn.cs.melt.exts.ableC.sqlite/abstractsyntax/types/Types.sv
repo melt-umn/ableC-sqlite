@@ -1,7 +1,7 @@
-grammar edu:umn:cs:melt:exts:ableC:sqlite:src:abstractsyntax:types;
+grammar edu:umn:cs:melt:exts:ableC:sqlite:abstractsyntax:types;
 
-imports edu:umn:cs:melt:exts:ableC:sqlite:src:abstractsyntax as abs;
-imports edu:umn:cs:melt:exts:ableC:sqlite:src:abstractsyntax:tables as tbls;
+imports edu:umn:cs:melt:exts:ableC:sqlite:abstractsyntax as abs;
+imports edu:umn:cs:melt:exts:ableC:sqlite:abstractsyntax:tables as tbls;
 import edu:umn:cs:melt:ableC:abstractsyntax;
 import edu:umn:cs:melt:ableC:abstractsyntax:env;
 import edu:umn:cs:melt:ableC:abstractsyntax:overload;

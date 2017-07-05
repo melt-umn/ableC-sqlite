@@ -1,10 +1,10 @@
-grammar edu:umn:cs:melt:exts:ableC:sqlite:src:abstractsyntax:use;
+grammar edu:umn:cs:melt:exts:ableC:sqlite:abstractsyntax:use;
 
-imports edu:umn:cs:melt:exts:ableC:sqlite:src:abstractsyntax as abs;
+imports edu:umn:cs:melt:exts:ableC:sqlite:abstractsyntax as abs;
 imports edu:umn:cs:melt:ableC:concretesyntax as cnc;
 imports edu:umn:cs:melt:ableC:abstractsyntax;
 imports edu:umn:cs:melt:ableC:abstractsyntax:construction;
-imports edu:umn:cs:melt:exts:ableC:sqlite:src:abstractsyntax:tables;
+imports edu:umn:cs:melt:exts:ableC:sqlite:abstractsyntax:tables;
 
 abstract production sqliteUse
 top::Stmt ::= dbFilename::Expr dbName::Name tableList::SqliteTableList

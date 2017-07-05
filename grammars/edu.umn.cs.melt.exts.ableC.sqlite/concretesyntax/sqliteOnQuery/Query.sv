@@ -1,4 +1,4 @@
-grammar edu:umn:cs:melt:exts:ableC:sqlite:src:concretesyntax:sqliteOnQuery;
+grammar edu:umn:cs:melt:exts:ableC:sqlite:concretesyntax:sqliteOnQuery;
 
 imports silver:langutil;
 
@@ -6,10 +6,10 @@ imports edu:umn:cs:melt:ableC:concretesyntax as host_cnc;
 imports edu:umn:cs:melt:ableC:abstractsyntax as host_abs;
 imports edu:umn:cs:melt:ableC:abstractsyntax:construction as host_abs;
 
-imports edu:umn:cs:melt:exts:ableC:sqlite:src:abstractsyntax as abs;
+imports edu:umn:cs:melt:exts:ableC:sqlite:abstractsyntax as abs;
 
-exports edu:umn:cs:melt:exts:ableC:sqlite:src:concretesyntax:query;
-exports edu:umn:cs:melt:exts:ableC:sqlite:src:concretesyntax:onKeyword;
+exports edu:umn:cs:melt:exts:ableC:sqlite:concretesyntax:query;
+exports edu:umn:cs:melt:exts:ableC:sqlite:concretesyntax:onKeyword;
 
 
 terminal SqliteCommit_t 'commit';

@@ -1,7 +1,7 @@
-grammar edu:umn:cs:melt:exts:ableC:sqlite:src:concretesyntax:foreach;
+grammar edu:umn:cs:melt:exts:ableC:sqlite:concretesyntax:foreach;
 
 imports edu:umn:cs:melt:ableC:concretesyntax as cnc;
-imports edu:umn:cs:melt:exts:ableC:sqlite:src:abstractsyntax as abs;
+imports edu:umn:cs:melt:exts:ableC:sqlite:abstractsyntax as abs;
 import silver:langutil;
 
 marking terminal SqliteForeach_t 'foreach' lexer classes {Ckeyword};

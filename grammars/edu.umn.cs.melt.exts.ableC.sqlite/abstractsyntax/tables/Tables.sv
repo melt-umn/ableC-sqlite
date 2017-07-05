@@ -1,4 +1,4 @@
-grammar edu:umn:cs:melt:exts:ableC:sqlite:src:abstractsyntax:tables;
+grammar edu:umn:cs:melt:exts:ableC:sqlite:abstractsyntax:tables;
 
 imports edu:umn:cs:melt:ableC:abstractsyntax;
 

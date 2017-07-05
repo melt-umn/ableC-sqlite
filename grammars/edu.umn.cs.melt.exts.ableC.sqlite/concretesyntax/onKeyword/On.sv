@@ -1,4 +1,4 @@
-grammar edu:umn:cs:melt:exts:ableC:sqlite:src:concretesyntax:onKeyword;
+grammar edu:umn:cs:melt:exts:ableC:sqlite:concretesyntax:onKeyword;
 
 imports edu:umn:cs:melt:ableC:concretesyntax;
 
