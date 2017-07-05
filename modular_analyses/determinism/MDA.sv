@@ -1,4 +1,4 @@
-grammar edu:umn:cs:melt:exts:ableC:sqlite:modular_analyses:determinism;
+grammar determinism;
 
 import edu:umn:cs:melt:ableC:host;
 
