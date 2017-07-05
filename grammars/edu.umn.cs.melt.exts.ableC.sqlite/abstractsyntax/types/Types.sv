@@ -33,7 +33,7 @@ top::Type ::= qs::Qualifiers tables::[tbls:SqliteTable]
             refIdTagType(
               structSEU(),
               "_sqlite_db_s",
-              "edu:umn:cs:melt:exts:ableC:sqlite:src:_sqlite_db_s"
+              "edu:umn:cs:melt:exts:ableC:sqlite:_sqlite_db_s"
             )
           )
         )
@@ -68,7 +68,7 @@ top::Type ::= qs::Qualifiers columns::[abs:SqliteColumn]
             refIdTagType(
               structSEU(),
               "_sqlite_query_s",
-              "edu:umn:cs:melt:exts:ableC:sqlite:src:_sqlite_query_s"
+              "edu:umn:cs:melt:exts:ableC:sqlite:_sqlite_query_s"
             )
           )
         )
