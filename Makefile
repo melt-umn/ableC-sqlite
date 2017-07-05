@@ -29,6 +29,9 @@ all: examples analyses test
 build:
 	@cd examples && make ableC.jar
 
+libs:
+	@cd src && $(MAKE) -j
+
 examples:
 	@cd examples && make examples
 
