@@ -40,16 +40,16 @@ ableC.jar: $(GRAMMAR_SOURCES)
 examples: join_person_details.out populate_tables_random.out populate_tables.out print_person_table.out
 
 join_person_details.c: join_person_details.xc ableC.jar
-	java -jar ableC.jar join_person_details.xc $(XCFLAGS)
+	java -Xss6M -jar ableC.jar join_person_details.xc $(XCFLAGS)
 
 populate_tables_random.c: populate_tables_random.xc ableC.jar
-	java -jar ableC.jar populate_tables_random.xc $(XCFLAGS)
+	java -Xss6M -jar ableC.jar populate_tables_random.xc $(XCFLAGS)
 
 populate_tables.c: populate_tables.xc ableC.jar
-	java -jar ableC.jar populate_tables.xc $(XCFLAGS)
+	java -Xss6M -jar ableC.jar populate_tables.xc $(XCFLAGS)
 
 print_person_table.c: print_person_table.xc ableC.jar
-	java -jar ableC.jar print_person_table.xc $(XCFLAGS)
+	java -Xss6M -jar ableC.jar print_person_table.xc $(XCFLAGS)
 
 join_person_details.out: join_person_details.o $(SRC_SOURCES) | libs
 	$(CC) $(LDFLAGS) join_person_details.o $(LOADLIBES) $(LDLIBS) -o $@
