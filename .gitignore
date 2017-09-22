@@ -31,9 +31,14 @@ build.xml
 a.out
 out
 
+examples/*.c
+test/**/*.c
+*.i
+*.o
+*.so
+*.a
+*.out
 *.test
-*.test.out
-*.test.stdout
-*.test.stderr
-*.tests_failed
-.clean
+
+# Extension-specific stuff
+*.db

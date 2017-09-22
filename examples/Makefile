@@ -13,15 +13,17 @@ GRAMMAR_SOURCES=$(shell find $(GRAMMAR_DIRS) -name *.sv -print0 | xargs -0)
 override SVFLAGS+=$(addprefix -I ,$(GRAMMAR_DIRS))
 
 # Flags passed to ableC including the appropriate directories
-XCFLAGS=-I $(EXTS_BASE)/ableC-sqlite/include
+override XCFLAGS+=-I $(EXTS_BASE)/ableC-sqlite/include
+# Flags passed to Java when invoking ableC
+override JAVAFLAGS+=-Xss6M
 
 # Flags passed to the C compiler, e.g. to enable various compiler extensions
-CFLAGS=
+override CFLAGS+=
 
 # All directories containing extension libraries that may be linked
 LIB_DIRS=$(wildcard $(EXTS_BASE)/ableC-sqlite/lib)
 # Flags passed to the linker specifying the appropriate directories
-LDFLAGS=$(addprefix -L,$(LIB_DIRS))
+override LDFLAGS+=$(addprefix -L,$(LIB_DIRS))
 # Flags passed to the linker specifying libraries to link
 LDLIBS=-Wl,-Bstatic -lsqlite -Wl,-Bdynamic -lpthread -ldl
 
@@ -40,16 +42,16 @@ ableC.jar: $(GRAMMAR_SOURCES)
 examples: join_person_details.out populate_tables_random.out populate_tables.out print_person_table.out
 
 join_person_details.c: join_person_details.xc ableC.jar
-	java -Xss6M -jar ableC.jar join_person_details.xc $(XCFLAGS)
+	java $(JAVAFLAGS) -jar ableC.jar join_person_details.xc $(XCFLAGS)
 
 populate_tables_random.c: populate_tables_random.xc ableC.jar
-	java -Xss6M -jar ableC.jar populate_tables_random.xc $(XCFLAGS)
+	java $(JAVAFLAGS) -jar ableC.jar populate_tables_random.xc $(XCFLAGS)
 
 populate_tables.c: populate_tables.xc ableC.jar
-	java -Xss6M -jar ableC.jar populate_tables.xc $(XCFLAGS)
+	java $(JAVAFLAGS) -jar ableC.jar populate_tables.xc $(XCFLAGS)
 
 print_person_table.c: print_person_table.xc ableC.jar
-	java -Xss6M -jar ableC.jar print_person_table.xc $(XCFLAGS)
+	java $(JAVAFLAGS) -jar ableC.jar print_person_table.xc $(XCFLAGS)
 
 join_person_details.out: join_person_details.o $(SRC_SOURCES) | libs
 	$(CC) $(LDFLAGS) join_person_details.o $(LOADLIBES) $(LDLIBS) -o $@
