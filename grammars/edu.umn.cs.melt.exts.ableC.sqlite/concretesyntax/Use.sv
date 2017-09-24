@@ -1,17 +1,16 @@
-grammar edu:umn:cs:melt:exts:ableC:sqlite:concretesyntax:use;
+grammar edu:umn:cs:melt:exts:ableC:sqlite:concretesyntax;
 
-imports silver:langutil;
+import silver:langutil;
 
-imports edu:umn:cs:melt:ableC:concretesyntax as host_cnc;
-imports edu:umn:cs:melt:ableC:abstractsyntax as host_abs;
-imports edu:umn:cs:melt:ableC:abstractsyntax:construction as host_abs;
+import edu:umn:cs:melt:ableC:concretesyntax as host_cnc;
+import edu:umn:cs:melt:ableC:abstractsyntax as host_abs;
+import edu:umn:cs:melt:ableC:abstractsyntax:construction as host_abs;
 
-imports edu:umn:cs:melt:exts:ableC:sqlite:abstractsyntax as abs;
-
+import edu:umn:cs:melt:exts:ableC:sqlite:abstractsyntax as abs;
 
 marking terminal SqliteUse_t 'use' lexer classes {Ckeyword};
 
-terminal SqliteAs_t 'as';
+terminal SqliteAs_t 'as' lexer classes {Ckeyword};
 terminal SqliteWith_t 'with' lexer classes {Ckeyword};
 terminal SqliteTable_t 'table';
 terminal SqliteVarchar_t 'VARCHAR';

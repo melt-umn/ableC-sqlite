@@ -1,17 +1,15 @@
-grammar edu:umn:cs:melt:exts:ableC:sqlite:concretesyntax:query;
+grammar edu:umn:cs:melt:exts:ableC:sqlite:concretesyntax;
 
-imports edu:umn:cs:melt:ableC:concretesyntax as cnc;
-imports edu:umn:cs:melt:exts:ableC:sqlite:abstractsyntax as abs;
-imports edu:umn:cs:melt:ableC:abstractsyntax as abs;
+import edu:umn:cs:melt:ableC:concretesyntax as cnc;
+import edu:umn:cs:melt:exts:ableC:sqlite:abstractsyntax as abs;
+import edu:umn:cs:melt:ableC:abstractsyntax as abs;
 import silver:langutil;
 
 -- see https://www.sqlite.org/lang.html for grammar of SQLite queries
 
 lexer class SqliteKeyword dominates cnc:Identifier_t;
 
-terminal SqliteWith_t 'WITH' lexer classes {SqliteKeyword};
 terminal SqliteRecursive_t 'RECURSIVE' lexer classes {SqliteKeyword};
-terminal SqliteAs_t 'AS' lexer classes {SqliteKeyword};
 terminal SqliteSelect_t 'SELECT' lexer classes {SqliteKeyword};
 terminal SqliteDistinct_t 'DISTINCT' lexer classes {SqliteKeyword};
 terminal SqliteAll_t 'ALL' lexer classes {SqliteKeyword};
