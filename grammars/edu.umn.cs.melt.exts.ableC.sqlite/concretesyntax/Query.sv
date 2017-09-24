@@ -9,6 +9,8 @@ import silver:langutil;
 
 lexer class SqliteKeyword dominates cnc:Identifier_t;
 
+terminal SqliteAs_t 'AS' lexer classes {Ckeyword};
+terminal SqliteWith_t 'WITH' lexer classes {Ckeyword};
 terminal SqliteRecursive_t 'RECURSIVE' lexer classes {SqliteKeyword};
 terminal SqliteSelect_t 'SELECT' lexer classes {SqliteKeyword};
 terminal SqliteDistinct_t 'DISTINCT' lexer classes {SqliteKeyword};

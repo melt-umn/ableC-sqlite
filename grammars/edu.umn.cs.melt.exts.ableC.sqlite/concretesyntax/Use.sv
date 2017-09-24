@@ -10,8 +10,8 @@ import edu:umn:cs:melt:exts:ableC:sqlite:abstractsyntax as abs;
 
 marking terminal SqliteUse_t 'use' lexer classes {Ckeyword};
 
-terminal SqliteAs_t 'as' lexer classes {Ckeyword};
-terminal SqliteWith_t 'with' lexer classes {Ckeyword};
+terminal SqliteLcAs_t 'as';
+terminal SqliteLcWith_t 'with';
 terminal SqliteTable_t 'table';
 terminal SqliteVarchar_t 'VARCHAR';
 terminal SqliteInteger_t 'INTEGER';
