@@ -40,81 +40,122 @@ properties([
    into an actual object of that type, with the remainder of the map being its
    parameters. */
 
-
 /* a node allocates an executor to actually do work */
 node {
-	try {
-    def ablec_base = (params.ABLEC_BASE == 'ableC') ? "${WORKSPACE}/ableC" : params.ABLEC_BASE
+  try {
+    // notifyBuild('STARTED')
 
-		/* stages are pretty much just labels about what's going on */
-		stage ("Build") {
-			checkout([ $class: 'GitSCM',
-//								 branches: [[name: '*/develop']],
-								 branches: [[name: '*/feature/type_qualifiers']],
-								 doGenerateSubmoduleConfigurations: false,
-								 extensions: [
-									 [ $class: 'RelativeTargetDirectory',
-										 relativeTargetDir: "ableC"]
-								 ],
-								 submoduleCfg: [],
-								 userRemoteConfigs: [
-									 [url: 'https://github.com/melt-umn/ableC.git']
-								 ]
-							 ])
-			checkout([ $class: 'GitSCM',
-								 branches: scm.branches,
-								 doGenerateSubmoduleConfigurations: scm.doGenerateSubmoduleConfigurations,
-								 extensions: [
-									 [ $class: 'RelativeTargetDirectory',
-										 relativeTargetDir: "edu.umn.cs.melt.exts.ableC.sqlite"]
-								 ],
-								 submoduleCfg: scm.submoduleCfg,
-								 userRemoteConfigs: scm.userRemoteConfigs
-							 ])
+    def extension_name = "ableC-sqlite"
 
-			/* env.PATH is the master's path, not the executor's */
-			withEnv(["PATH=${params.SILVER_BASE}/support/bin/:${env.PATH}"]) {
-				dir("edu.umn.cs.melt.exts.ableC.sqlite/artifact") {
-					sh "./build.sh -I ${ablec_base} -G ${WORKSPACE}"
-				}
-			}
-		}
+    /* the full path to ableC, use parameter as-is if changed from default,
+     * otherwise prepend full path to workspace */
+    def ablec_base = (params.ABLEC_BASE == 'ableC') ? "${WORKSPACE}/${params.ABLEC_BASE}" : params.ABLEC_BASE
+    def env = [
+      "PATH=${params.SILVER_BASE}/support/bin/:${env.PATH}",
+      "C_INCLUDE_PATH=/project/melt/Software/ext-libs/usr/local/include:${env.C_INCLUDE_PATH}",
+      "LIBRARY_PATH=/project/melt/Software/ext-libs/usr/local/lib:${env.LIBRARY_PATH}",
+      "ABLEC_BASE=${ablec_base}",
+      "EXTS_BASE=${WORKSPACE}/extensions",
+      "SVFLAGS=-G ${WORKSPACE}/generated"
+    ]
 
-		stage ("Modular Analyses") {
-			withEnv(["PATH=${params.SILVER_BASE}/support/bin/:${env.PATH}"]) {
-				def mdir = "edu.umn.cs.melt.exts.ableC.sqlite/modular_analyses"
-				dir("${mdir}/determinism") {
-					sh "./run.sh -I ${ablec_base}"
-				}
-				dir("${mdir}/well_definedness") {
-					sh "./run.sh -I ${ablec_base}"
-				}
-			}
-		}
+    /* stages are pretty much just labels about what's going on */
+    stage ("Build") {
+      /******** TEMPORARY: while this Jenkinsfile is in flux, whack the workspace hard */
+      //stash includes: "extensions/${extension_name}/,ableC/", name: 'old', useDefaultExcludes: false
+      //deleteDir()
+      //unstash 'old'
 
-		stage ("Test") {
-			def top_dir = "edu.umn.cs.melt.exts.ableC.sqlite"
-			dir("${top_dir}/test/positive") {
-				sh "./the_tests.sh"
-			}
-			dir("${top_dir}/test/negative") {
-				sh "./the_tests.sh"
-			}
-		}
+      /* Clean Silver-generated files from previous builds in this workspace */
+      sh "mkdir -p generated"
+      sh "rm -rf generated/* || true"
 
-	} catch (e) {
-		currentBuild.result = 'FAILURE'
-		throw e
-	} finally {
+      /* don't check out extension under ableC_Home because doing so would allow
+       * the Makefiles to find ableC with the included search paths, but we want
+       * to explicitly specify the path to ableC according to ABLEC_BASE */
+    checkout([ $class: 'GitSCM',
+               branches: scm.branches,
+               doGenerateSubmoduleConfigurations: scm.doGenerateSubmoduleConfigurations,
+               extensions: [
+                 [ $class: 'RelativeTargetDirectory',
+                   relativeTargetDir: "extensions/${extension_name}"],
+                 [ $class: 'CleanCheckout']
+                 ],
+               submoduleCfg: scm.submoduleCfg,
+               userRemoteConfigs: scm.userRemoteConfigs
+             ])
+
+      checkout([ $class: 'GitSCM',
+//                 branches: [[name: '*/develop']],
+                 branches: [[name: '*/feature/type_qualifiers']],
+                 doGenerateSubmoduleConfigurations: false,
+                 extensions: [
+                   [ $class: 'RelativeTargetDirectory',
+                     relativeTargetDir: 'ableC'],
+                   [ $class: 'CleanCheckout']
+                 ],
+                 userRemoteConfigs: [
+                   [url: 'https://github.com/melt-umn/ableC.git']
+                 ]
+               ])
+
+      /* env.PATH is the master's path, not the executor's */
+      withEnv(env) {
+        dir("extensions/${extension_name}") {
+          sh "make clean build"
+        }
+      }
+    }
+    
+    stage ("Libraries") {
+      withEnv(env) {
+        dir("extensions/${extension_name}") {
+          sh "make libs"
+        }
+      }
+    }
+    
+    stage ("Examples") {
+      withEnv(env) {
+        dir("extensions/${extension_name}") {
+          sh "make examples"
+        }
+      }
+    }
+
+    stage ("Modular Analyses") {
+      withEnv(env) {
+        dir("extensions/${extension_name}") {
+          /* use -B option to always run analyses */
+          sh "make -B analyses"
+        }
+      }
+    }
+
+    stage ("Test") {
+      withEnv(env) {
+        dir("extensions/${extension_name}") {
+          /* use -B option to always run tests */
+          sh "make -B test"
+        }
+      }
+    }
+  }
+  catch (e) {
+    currentBuild.result = 'FAILURE'
+    throw e
+  }
+  finally {
     def previousResult = currentBuild.previousBuild?.result
 
-		if (currentBuild.result == 'FAILURE') {
-			notifyBuild(currentBuild.result)
-		} else if (currentBuild.result == null &&
-        previousResult && previousResult == 'FAILURE') {
-			notifyBuild('BACK_TO_NORMAL')
+    if (currentBuild.result == 'FAILURE') {
+      notifyBuild(currentBuild.result)
     }
-	}
+    else if (currentBuild.result == null &&
+             previousResult && previousResult == 'FAILURE') {
+      notifyBuild('BACK_TO_NORMAL')
+    }
+  }
 }
 
 /* Slack / email notification
@@ -148,10 +189,10 @@ def notifyBuild(String buildStatus = 'STARTED') {
   slackSend (color: colorCode, message: summary)
 
   emailext(
-      subject: subject,
-      body: details,
-//			to: 'evw@umn.edu',
-      recipientProviders: [[$class: 'CulpritsRecipientProvider']]
-    )
+    subject: subject,
+    body: details,
+    to: 'evw@umn.edu',
+    recipientProviders: [[$class: 'CulpritsRecipientProvider']]
+  )
 }
 

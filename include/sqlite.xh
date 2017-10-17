@@ -5,12 +5,12 @@
 # include <stdlib.h>
 # include <stdio.h>
 
-struct __attribute__((refId("edu:umn:cs:melt:exts:ableC:sqlite:src:_sqlite_db_s"))) _sqlite_db_s {
+struct __attribute__((refId("edu:umn:cs:melt:exts:ableC:sqlite:_sqlite_db_s"))) _sqlite_db_s {
   sqlite3 *db;
 };
 typedef struct _sqlite_db_s *_sqlite_db;
 
-struct __attribute__((refId("edu:umn:cs:melt:exts:ableC:sqlite:src:_sqlite_query_s"))) _sqlite_query_s {
+struct __attribute__((refId("edu:umn:cs:melt:exts:ableC:sqlite:_sqlite_query_s"))) _sqlite_query_s {
   sqlite3_stmt *query;
 };
 typedef struct _sqlite_query_s *_sqlite_query;
