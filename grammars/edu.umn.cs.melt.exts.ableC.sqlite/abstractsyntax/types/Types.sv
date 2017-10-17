@@ -2,9 +2,9 @@ grammar edu:umn:cs:melt:exts:ableC:sqlite:abstractsyntax:types;
 
 imports edu:umn:cs:melt:exts:ableC:sqlite:abstractsyntax as abs;
 imports edu:umn:cs:melt:exts:ableC:sqlite:abstractsyntax:tables as tbls;
-import edu:umn:cs:melt:ableC:abstractsyntax;
+import edu:umn:cs:melt:ableC:abstractsyntax:host;
 import edu:umn:cs:melt:ableC:abstractsyntax:env;
-import edu:umn:cs:melt:ableC:abstractsyntax:overload;
+import edu:umn:cs:melt:ableC:abstractsyntax:overloadable;
 
 abstract production sqliteDbTypeExpr
 top::BaseTypeExpr ::= tables::[tbls:SqliteTable]

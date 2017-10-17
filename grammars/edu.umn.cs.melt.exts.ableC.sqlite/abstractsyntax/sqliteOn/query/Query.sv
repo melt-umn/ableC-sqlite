@@ -4,7 +4,7 @@ imports edu:umn:cs:melt:exts:ableC:sqlite:abstractsyntax as abs;
 imports edu:umn:cs:melt:ableC:concretesyntax as cnc;
 imports edu:umn:cs:melt:exts:ableC:sqlite:abstractsyntax:sqliteOn;
 imports edu:umn:cs:melt:exts:ableC:sqlite:abstractsyntax:tables;
-imports edu:umn:cs:melt:ableC:abstractsyntax;
+imports edu:umn:cs:melt:ableC:abstractsyntax:host;
 imports edu:umn:cs:melt:ableC:abstractsyntax:construction;
 imports silver:langutil;
 

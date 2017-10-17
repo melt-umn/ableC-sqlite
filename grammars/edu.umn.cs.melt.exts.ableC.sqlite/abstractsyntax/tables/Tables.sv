@@ -1,6 +1,6 @@
 grammar edu:umn:cs:melt:exts:ableC:sqlite:abstractsyntax:tables;
 
-imports edu:umn:cs:melt:ableC:abstractsyntax;
+imports edu:umn:cs:melt:ableC:abstractsyntax:host;
 
 nonterminal SqliteTableList with tables;
 synthesized attribute tables :: [SqliteTable];

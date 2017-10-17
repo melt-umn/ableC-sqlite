@@ -3,7 +3,7 @@ grammar edu:umn:cs:melt:exts:ableC:sqlite:concretesyntax;
 import silver:langutil;
 
 import edu:umn:cs:melt:ableC:concretesyntax as host_cnc;
-import edu:umn:cs:melt:ableC:abstractsyntax as host_abs;
+import edu:umn:cs:melt:ableC:abstractsyntax:host as host_abs;
 import edu:umn:cs:melt:ableC:abstractsyntax:construction as host_abs;
 
 import edu:umn:cs:melt:exts:ableC:sqlite:abstractsyntax as abs;

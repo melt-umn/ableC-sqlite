@@ -2,7 +2,7 @@ grammar edu:umn:cs:melt:exts:ableC:sqlite:abstractsyntax:foreach;
 
 imports edu:umn:cs:melt:exts:ableC:sqlite:abstractsyntax as abs;
 imports edu:umn:cs:melt:exts:ableC:sqlite:abstractsyntax:tables;
-imports edu:umn:cs:melt:ableC:abstractsyntax;
+imports edu:umn:cs:melt:ableC:abstractsyntax:host;
 imports edu:umn:cs:melt:ableC:abstractsyntax:construction;
 imports edu:umn:cs:melt:ableC:abstractsyntax:env;
 imports silver:langutil;
@@ -66,13 +66,7 @@ top::Stmt ::= row::Name query::Expr body::Stmt
 --    );
 
   -- sqlite3_step(${query}.query) == SQLITE_ROW
-  local hasRow :: Expr =
-    binaryOpExpr(
-      callStep,
-      compareOp(equalsOp(location=builtIn()), location=builtIn()),
-      sqliteRow,
-      location=builtIn()
-    );
+  local hasRow :: Expr = equalsExpr(callStep, sqliteRow, location=builtIn());
 
   -- for example: const unsigned char *name; int age;
   local columnDecls :: StructItemList = makeColumnDecls(columns);

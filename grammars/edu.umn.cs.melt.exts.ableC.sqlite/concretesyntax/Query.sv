@@ -2,7 +2,7 @@ grammar edu:umn:cs:melt:exts:ableC:sqlite:concretesyntax;
 
 import edu:umn:cs:melt:ableC:concretesyntax as cnc;
 import edu:umn:cs:melt:exts:ableC:sqlite:abstractsyntax as abs;
-import edu:umn:cs:melt:ableC:abstractsyntax as abs;
+import edu:umn:cs:melt:ableC:abstractsyntax:host as abs;
 import silver:langutil;
 
 -- see https://www.sqlite.org/lang.html for grammar of SQLite queries
