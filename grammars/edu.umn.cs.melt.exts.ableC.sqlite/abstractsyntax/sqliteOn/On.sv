@@ -105,8 +105,7 @@ top::Stmt ::= db::Expr query::SqliteQuery queryName::Name
         memberExpr(db, true, name("db", location=builtIn()), location=builtIn()),
         stringLiteral(quote(query.queryStr), location=builtIn()),
         mkIntConst(length(query.queryStr)+1, builtIn()),
-        unaryOpExpr(
-          addressOfOp(location=builtIn()),
+        addressOfExpr(
           memberExpr(
             declRefExpr(queryName, location=builtIn()),
             true,
