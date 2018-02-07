@@ -14,6 +14,7 @@ top::Stmt ::= row::Name query::Expr body::Stmt
   top.pp = ppConcat([
     row.pp, space(), query.pp, text("{"), line(), nestlines(2, body.pp), text("}")
   ]);
+  top.functionDefs := body.functionDefs;
   query.env = top.env;
 
   local localErrors :: [Message] =

@@ -18,6 +18,7 @@ top::Stmt ::= db::Expr query::SqliteQuery queryName::Name
 --    db.pp, space(), query.pp, space(), queryName.pp
     db.pp, space(), queryName.pp
   ]);
+  top.functionDefs := [];
   db.env = top.env;
 
   local dbTables :: [SqliteTable] =
