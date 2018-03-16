@@ -206,7 +206,7 @@ Init ::= col::SqliteColumn query::Expr colIndex::Integer
     end;
 
   return
-    init(
+    positionalInit(
       exprInitializer(
         directCallExpr(
           name(f, location=builtIn()),
