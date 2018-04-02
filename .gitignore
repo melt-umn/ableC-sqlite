@@ -32,7 +32,7 @@ a.out
 out
 
 examples/*.c
-test/**/*.c
+tests/**/*.c
 *.i
 *.o
 *.so

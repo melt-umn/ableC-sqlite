@@ -2,7 +2,7 @@
 ABLEC_BASE?=../../../ableC
 EXTS_BASE?=../../../extensions
 # All directories containing grammars that may be included
-GRAMMAR_DIRS=$(ABLEC_BASE) $(wildcard $(EXTS_BASE)/*/grammars)
+GRAMMAR_DIRS=$(ABLEC_BASE)/grammars $(wildcard $(EXTS_BASE)/*/grammars)
 # Flags passed to silver including the appropriate directories
 override SVFLAGS+=$(addprefix -I , $(GRAMMAR_DIRS))
 
