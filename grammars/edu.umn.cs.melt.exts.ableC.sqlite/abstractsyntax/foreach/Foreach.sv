@@ -4,6 +4,7 @@ imports edu:umn:cs:melt:exts:ableC:sqlite:abstractsyntax as abs;
 imports edu:umn:cs:melt:exts:ableC:sqlite:abstractsyntax:tables;
 imports edu:umn:cs:melt:ableC:abstractsyntax:host;
 imports edu:umn:cs:melt:ableC:abstractsyntax:construction;
+imports edu:umn:cs:melt:ableC:abstractsyntax:substitution;
 imports edu:umn:cs:melt:ableC:abstractsyntax:env;
 imports silver:langutil;
 imports silver:langutil:pp;
@@ -11,6 +12,7 @@ imports silver:langutil:pp;
 abstract production sqliteForeach
 top::Stmt ::= row::Name query::Expr body::Stmt
 {
+  propagate substituted;
   top.pp = ppConcat([
     row.pp, space(), query.pp, text("{"), line(), nestlines(2, body.pp), text("}")
   ]);
