@@ -101,7 +101,7 @@ top::Stmt ::= row::Name query::Expr body::Stmt
   local rowDecl :: Stmt =
     declStmt(
       variableDecls(
-        [],
+        nilStorageClass(),
         nilAttribute(),
         rowTypeExpr,
         foldDeclarator([
