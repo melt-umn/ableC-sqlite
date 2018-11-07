@@ -23,7 +23,7 @@ top::Stmt ::= dbFilename::Expr dbName::Name tableList::SqliteTableList
   local dbDecl :: Stmt =
     declStmt(
       variableDecls(
-        [],
+        nilStorageClass(),
         nilAttribute(),
         abs:sqliteDbTypeExpr(tableList.tables),
         foldDeclarator([
