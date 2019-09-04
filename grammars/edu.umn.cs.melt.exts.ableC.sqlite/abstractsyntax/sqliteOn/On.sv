@@ -6,7 +6,6 @@ imports edu:umn:cs:melt:exts:ableC:sqlite:abstractsyntax:tables;
 imports edu:umn:cs:melt:exts:ableC:sqlite:abstractsyntax:foreach as foreach;
 imports edu:umn:cs:melt:ableC:abstractsyntax:host;
 imports edu:umn:cs:melt:ableC:abstractsyntax:construction;
-imports edu:umn:cs:melt:ableC:abstractsyntax:substitution;
 imports edu:umn:cs:melt:ableC:abstractsyntax:env;
 imports silver:langutil;
 imports silver:langutil:pp;
@@ -14,7 +13,6 @@ imports silver:langutil:pp;
 abstract production sqliteQueryDb
 top::Stmt ::= db::Expr query::SqliteQuery queryName::Name
 {
-  propagate substituted;
   -- TODO: add pp to query
   top.pp = ppConcat([
 --    db.pp, space(), query.pp, space(), queryName.pp
@@ -86,7 +84,7 @@ top::Stmt ::= db::Expr query::SqliteQuery queryName::Name
   local queryDecl :: Stmt =
     declStmt(
       variableDecls(
-        [],
+        nilStorageClass(),
         nilAttribute(),
         abs:sqliteQueryTypeExpr(resultColumns),
         foldDeclarator([
@@ -200,7 +198,6 @@ top::Stmt ::= exprParams::[Expr] queryName::Name i::Integer
 abstract production makeBind
 top::Expr ::= exprParam::Expr queryName::Name i::Integer
 {
-  propagate substituted;
   top.pp = ppImplode(space(), [exprParam.pp, queryName.pp, text(toString(i))]);
   exprParam.env = top.env;
 
