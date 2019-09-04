@@ -84,7 +84,7 @@ top::Stmt ::= db::Expr query::SqliteQuery queryName::Name
   local queryDecl :: Stmt =
     declStmt(
       variableDecls(
-        [],
+        nilStorageClass(),
         nilAttribute(),
         abs:sqliteQueryTypeExpr(resultColumns),
         foldDeclarator([

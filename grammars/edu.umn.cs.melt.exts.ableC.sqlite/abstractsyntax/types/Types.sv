@@ -28,9 +28,9 @@ top::Type ::= qs::Qualifiers tables::[tbls:SqliteTable]
         "_sqlite_db",
         pointerType(
           nilQualifier(),
-          tagType(
+          extType(
             nilQualifier(),
-            refIdTagType(
+            refIdExtType(
               structSEU(),
               "_sqlite_db_s",
               "edu:umn:cs:melt:exts:ableC:sqlite:_sqlite_db_s"
@@ -63,9 +63,9 @@ top::Type ::= qs::Qualifiers columns::[abs:SqliteColumn]
         "_sqlite_query",
         pointerType(
           nilQualifier(),
-          tagType(
+          extType(
             nilQualifier(),
-            refIdTagType(
+            refIdExtType(
               structSEU(),
               "_sqlite_query_s",
               "edu:umn:cs:melt:exts:ableC:sqlite:_sqlite_query_s"
