@@ -8,13 +8,13 @@ import edu:umn:cs:melt:ableC:abstractsyntax:construction as host_abs;
 
 import edu:umn:cs:melt:exts:ableC:sqlite:abstractsyntax as abs;
 
-marking terminal SqliteUse_t 'use' lexer classes {Ckeyword};
+marking terminal SqliteUse_t 'use' lexer classes {Keyword, Global};
 
-terminal SqliteLcAs_t 'as';
-terminal SqliteLcWith_t 'with';
-terminal SqliteTable_t 'table';
-terminal SqliteVarchar_t 'VARCHAR';
-terminal SqliteInteger_t 'INTEGER';
+terminal SqliteLcAs_t 'as' lexer classes {Keyword};
+terminal SqliteLcWith_t 'with' lexer classes {Keyword};
+terminal SqliteTable_t 'table' lexer classes {Keyword};
+terminal SqliteVarchar_t 'VARCHAR' lexer classes {SqliteKeyword};
+terminal SqliteInteger_t 'INTEGER' lexer classes {SqliteKeyword};
 
 concrete production sqliteUse_c
 top::host_cnc:Stmt_c ::= 'use' u::UseBit_c

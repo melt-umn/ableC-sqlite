@@ -7,10 +7,10 @@ import silver:langutil;
 
 -- see https://www.sqlite.org/lang.html for grammar of SQLite queries
 
-lexer class SqliteKeyword dominates cnc:Identifier_t;
+lexer class SqliteKeyword extends Keyword;
 
-terminal SqliteAs_t 'AS' lexer classes {Ckeyword};
-terminal SqliteWith_t 'WITH' lexer classes {Ckeyword};
+terminal SqliteAs_t 'AS' lexer classes {SqliteKeyword};
+terminal SqliteWith_t 'WITH' lexer classes {SqliteKeyword};
 terminal SqliteRecursive_t 'RECURSIVE' lexer classes {SqliteKeyword};
 terminal SqliteSelect_t 'SELECT' lexer classes {SqliteKeyword};
 terminal SqliteDistinct_t 'DISTINCT' lexer classes {SqliteKeyword};
@@ -90,6 +90,15 @@ terminal SqliteUnaryCollate_t '~' precedence = 26;
 terminal SqliteNot_t 'NOT' precedence = 26, lexer classes {SqliteKeyword};
 terminal SqliteDollar_t '$' lexer classes {SqliteKeyword};
 
+-- Only using lexical precedence between extension terminals
+terminal SqliteIdentifier_t /[A-Za-z_\$][A-Za-z_0-9\$]*/ submits to SqliteKeyword;
+
+function fromId
+abs:Name ::= id::SqliteIdentifier_t
+{
+  return abs:name(id.lexeme, location=id.location);
+}
+
 nonterminal SqliteQuery_c with location, ast<abs:SqliteQuery>;
 concrete productions top::SqliteQuery_c
 | s::SqliteSelectStmt_c
@@ -164,9 +173,9 @@ concrete productions top::SqliteCommonTableExprList_c
 
 nonterminal SqliteCommonTableExpr_c with location, ast<abs:SqliteCommonTableExpr>, unparse;
 concrete productions top::SqliteCommonTableExpr_c
-| tableName::cnc:Identifier_t cs::SqliteOptColumnNameList_c SqliteAs_t '(' s::SqliteSelectStmt_c ')'
+| tableName::SqliteIdentifier_t cs::SqliteOptColumnNameList_c SqliteAs_t '(' s::SqliteSelectStmt_c ')'
   {
-    top.ast = abs:sqliteCommonTableExpr(abs:fromId(tableName), s.ast, cs.ast);
+    top.ast = abs:sqliteCommonTableExpr(fromId(tableName), s.ast, cs.ast);
     top.unparse = tableName.lexeme ++ cs.unparse ++ " AS (" ++ s.unparse ++ ")";
   }
 
@@ -235,9 +244,9 @@ concrete productions top::SqliteResultColumn_c
     top.ast = abs:sqliteResultColumnStar();
     top.unparse = "*";
   }
-| tableName::cnc:Identifier_t '.' '*'
+| tableName::SqliteIdentifier_t '.' '*'
   {
-    top.ast = abs:sqliteResultColumnTableStar(abs:fromId(tableName));
+    top.ast = abs:sqliteResultColumnTableStar(fromId(tableName));
     top.unparse = tableName.lexeme ++ ".*";
   }
 
@@ -256,9 +265,9 @@ concrete productions top::SqliteOptAsColumnAlias_c
 
 nonterminal SqliteAsColumnAlias_c with location, ast<abs:SqliteAsColumnAlias>, unparse;
 concrete productions top::SqliteAsColumnAlias_c
-| a::SqliteOptAs_c columnAlias::cnc:Identifier_t
+| a::SqliteOptAs_c columnAlias::SqliteIdentifier_t
   {
-    top.ast = abs:sqliteAsColumnAlias(abs:fromId(columnAlias));
+    top.ast = abs:sqliteAsColumnAlias(fromId(columnAlias));
     top.unparse = a.unparse ++ columnAlias.lexeme;
   }
 
@@ -318,9 +327,9 @@ concrete productions top::SqliteTableOrSubqueryListOrJoin_c
 -- TODO: complete
 nonterminal SqliteTableOrSubquery_c with location, ast<abs:SqliteTableOrSubquery>, unparse;
 concrete productions top::SqliteTableOrSubquery_c
-| tableName::cnc:Identifier_t
+| tableName::SqliteIdentifier_t
   {
-    top.ast = abs:sqliteTableOrSubquery(abs:fromId(tableName));
+    top.ast = abs:sqliteTableOrSubquery(fromId(tableName));
     top.unparse = tableName.lexeme;
   }
 
@@ -709,9 +718,9 @@ concrete productions top::SqliteExpr_c
     top.ast = abs:sqliteUnaryExpr(e.ast);
     top.unparse = "NOT " ++ e.unparse;
   }
-| functionName::cnc:Identifier_t '(' a::SqliteOptFunctionArgs_c ')'
+| functionName::SqliteIdentifier_t '(' a::SqliteOptFunctionArgs_c ')'
   {
-    top.ast = abs:sqliteFunctionCallExpr(abs:fromId(functionName), a.ast);
+    top.ast = abs:sqliteFunctionCallExpr(fromId(functionName), a.ast);
     top.unparse = functionName.lexeme ++ "(" ++ a.unparse ++ ")";
   }
 | '(' e::SqliteExpr_c ')'
@@ -722,7 +731,7 @@ concrete productions top::SqliteExpr_c
 --| SqliteCast_t '(' SqliteExpr_c SqliteAs_t SqliteTypeName_c ')'
 --  {
 --  }
---| SqliteExpr_c SqliteCollate_t collationName::cnc:Identifier_t
+--| SqliteExpr_c SqliteCollate_t collationName::SqliteIdentifier_t
 --  {
 --  }
 --| SqliteExpr_c SqliteOptNot_c SqliteLikeGlobRegExpOrMatch_c SqliteExpr_c SqliteOptEscapedExpr_c
@@ -762,19 +771,19 @@ concrete productions top::SqliteExpr_c
 
 nonterminal SqliteSchemaTableColumnName_c with location, ast<abs:SqliteSchemaTableColumnName>, unparse;
 concrete productions top::SqliteSchemaTableColumnName_c
-| schemaName::cnc:Identifier_t '.' tableName::cnc:Identifier_t '.' columnName::cnc:Identifier_t
+| schemaName::SqliteIdentifier_t '.' tableName::SqliteIdentifier_t '.' columnName::SqliteIdentifier_t
   {
-    top.ast = abs:sqliteSchemaTableColumnName(abs:fromId(schemaName), abs:fromId(tableName), abs:fromId(columnName));
+    top.ast = abs:sqliteSchemaTableColumnName(fromId(schemaName), fromId(tableName), fromId(columnName));
     top.unparse = schemaName.lexeme ++ "." ++ tableName.lexeme ++ "." ++ columnName.lexeme;
   }
-| tableName::cnc:Identifier_t '.' columnName::cnc:Identifier_t
+| tableName::SqliteIdentifier_t '.' columnName::SqliteIdentifier_t
   {
-    top.ast = abs:sqliteTableColumnName(abs:fromId(tableName), abs:fromId(columnName));
+    top.ast = abs:sqliteTableColumnName(fromId(tableName), fromId(columnName));
     top.unparse = tableName.lexeme ++ "." ++ columnName.lexeme;
   }
-| columnName::cnc:Identifier_t
+| columnName::SqliteIdentifier_t
   {
-    top.ast = abs:sqliteSColumnName(abs:fromId(columnName));
+    top.ast = abs:sqliteSColumnName(fromId(columnName));
     top.unparse = columnName.lexeme;
   }
 
@@ -866,14 +875,14 @@ concrete productions top::SqliteOptColumnNameList_c
 
 nonterminal SqliteColumnNameList_c with location, ast<abs:SqliteColumnNameList>, unparse;
 concrete productions top::SqliteColumnNameList_c
-| cs::SqliteColumnNameList_c ',' c::cnc:Identifier_t
+| cs::SqliteColumnNameList_c ',' c::SqliteIdentifier_t
   {
-    top.ast = abs:sqliteColumnNameList(abs:fromId(c), cs.ast);
+    top.ast = abs:sqliteColumnNameList(fromId(c), cs.ast);
     top.unparse = cs.unparse ++ ", " ++ c.lexeme;
   }
-| c::cnc:Identifier_t
+| c::SqliteIdentifier_t
   {
-    top.ast = abs:sqliteColumnNameList(abs:fromId(c), abs:sqliteNilColumnNameList());
+    top.ast = abs:sqliteColumnNameList(fromId(c), abs:sqliteNilColumnNameList());
     top.unparse = c.lexeme;
   }
 
@@ -934,9 +943,9 @@ concrete productions top::SqliteOptCollate_c
 
 nonterminal SqliteCollate_c with location, ast<abs:SqliteCollate>, unparse;
 concrete productions top::SqliteCollate_c
-| SqliteCollate_t collationName::cnc:Identifier_t
+| SqliteCollate_t collationName::SqliteIdentifier_t
   {
-    top.ast = abs:sqliteCollate(abs:fromId(collationName));
+    top.ast = abs:sqliteCollate(fromId(collationName));
     top.unparse = " COLLATE " ++ collationName.lexeme;
   }
 
@@ -1058,14 +1067,14 @@ concrete productions top::SqliteInsertOrReplace_c
 
 nonterminal SqliteSchemaTableName_c with location, ast<abs:SqliteSchemaTableName>, unparse;
 concrete productions top::SqliteSchemaTableName_c
-| schemaName::cnc:Identifier_t '.' tableName::cnc:Identifier_t
+| schemaName::SqliteIdentifier_t '.' tableName::SqliteIdentifier_t
   {
-    top.ast = abs:sqliteSchemaTableName(abs:fromId(schemaName), abs:fromId(tableName));
+    top.ast = abs:sqliteSchemaTableName(fromId(schemaName), fromId(tableName));
     top.unparse = schemaName.lexeme ++ "." ++ tableName.lexeme;
   }
-| tableName::cnc:Identifier_t
+| tableName::SqliteIdentifier_t
   {
-    top.ast = abs:sqliteTableName(abs:fromId(tableName));
+    top.ast = abs:sqliteTableName(fromId(tableName));
     top.unparse = tableName.lexeme;
   }
 
@@ -1107,7 +1116,7 @@ concrete productions top::SqliteQualifiedTableName_c
 
 nonterminal SqliteOptIndexed_c with location, unparse;
 concrete productions top::SqliteOptIndexed_c
-| SqliteIndexed_t SqliteBy_t indexName::cnc:Identifier_t
+| SqliteIndexed_t SqliteBy_t indexName::SqliteIdentifier_t
   {
     top.unparse = " INDEXED BY " ++ indexName.lexeme;
   }
