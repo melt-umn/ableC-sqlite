@@ -4,7 +4,7 @@ import edu:umn:cs:melt:ableC:concretesyntax as cnc;
 import edu:umn:cs:melt:exts:ableC:sqlite:abstractsyntax as abs;
 import silver:langutil;
 
-marking terminal SqliteForeach_t 'foreach' lexer classes {Ckeyword};
+marking terminal SqliteForeach_t 'foreach' lexer classes {Keyword, Global};
 
 concrete production sqliteForeach_c
 top::cnc:Stmt_c ::= 'foreach' '(' row::cnc:Identifier_t ':'

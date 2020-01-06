@@ -8,9 +8,9 @@ import edu:umn:cs:melt:ableC:abstractsyntax:construction as host_abs;
 
 import edu:umn:cs:melt:exts:ableC:sqlite:abstractsyntax as abs;
 
-marking terminal SqliteOn_t 'on' lexer classes {Ckeyword};
-terminal SqliteCommit_t 'commit';
-terminal SqliteQuery_t 'query';
+marking terminal SqliteOn_t 'on' lexer classes {Keyword, Global};
+terminal SqliteCommit_t 'commit' lexer classes {Keyword};
+terminal SqliteQuery_t 'query' lexer classes {Keyword};
 
 concrete production sqliteQueryDb_c
 top::host_cnc:Stmt_c ::= 'on' q::QueryBit_c
