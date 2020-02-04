@@ -8,11 +8,11 @@ import edu:umn:cs:melt:ableC:abstractsyntax:construction as host_abs;
 
 import edu:umn:cs:melt:exts:ableC:sqlite:abstractsyntax as abs;
 
-marking terminal SqliteUse_t 'use' lexer classes {Keyword, Global};
+marking terminal SqliteUse_t 'use' lexer classes {host_cnc:Keyword, host_cnc:Global};
 
-terminal SqliteLcAs_t 'as' lexer classes {Keyword};
-terminal SqliteLcWith_t 'with' lexer classes {Keyword};
-terminal SqliteTable_t 'table' lexer classes {Keyword};
+terminal SqliteLcAs_t 'as' lexer classes {host_cnc:Keyword};
+terminal SqliteLcWith_t 'with' lexer classes {host_cnc:Keyword};
+terminal SqliteTable_t 'table' lexer classes {host_cnc:Keyword};
 terminal SqliteVarchar_t 'VARCHAR' lexer classes {SqliteKeyword};
 terminal SqliteInteger_t 'INTEGER' lexer classes {SqliteKeyword};
 
