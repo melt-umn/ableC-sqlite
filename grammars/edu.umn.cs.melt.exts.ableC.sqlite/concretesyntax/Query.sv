@@ -7,7 +7,7 @@ import silver:langutil;
 
 -- see https://www.sqlite.org/lang.html for grammar of SQLite queries
 
-lexer class SqliteKeyword extends Keyword;
+lexer class SqliteKeyword extends cnc:Keyword;
 
 terminal SqliteAs_t 'AS' lexer classes {SqliteKeyword};
 terminal SqliteWith_t 'WITH' lexer classes {SqliteKeyword};
@@ -91,7 +91,7 @@ terminal SqliteNot_t 'NOT' precedence = 26, lexer classes {SqliteKeyword};
 terminal SqliteDollar_t '$' lexer classes {SqliteKeyword};
 
 -- Only using lexical precedence between extension terminals
-terminal SqliteIdentifier_t /[A-Za-z_\$][A-Za-z_0-9\$]*/ lexer classes {Identifier}, submits to SqliteKeyword;
+terminal SqliteIdentifier_t /[A-Za-z_\$][A-Za-z_0-9\$]*/ lexer classes {cnc:Identifier}, submits to SqliteKeyword;
 
 function fromId
 abs:Name ::= id::SqliteIdentifier_t
