@@ -99,6 +99,16 @@ abs:Name ::= id::SqliteIdentifier_t
   return abs:name(id.lexeme, location=id.location);
 }
 
+terminal SqliteLineComment_t /\-\-.*/ lexer classes {cnc:Comment};
+
+nonterminal SqliteQueryBlock_c with location, ast<abs:SqliteQuery>;
+concrete productions top::SqliteQueryBlock_c
+| '{' query::SqliteQuery_c '}'
+  layout {SqliteLineComment_t, cnc:BlockComment_t, cnc:Spaces_t, cnc:NewLine_t}
+  {
+    top.ast = query.ast;
+  }
+
 nonterminal SqliteQuery_c with location, ast<abs:SqliteQuery>;
 concrete productions top::SqliteQuery_c
 | s::SqliteSelectStmt_c
@@ -756,7 +766,7 @@ concrete productions top::SqliteExpr_c
 --  {
 --  }
 
-{- The folloinwg production fails the modular determinism analysis
+{- The following production fails the modular determinism analysis
    because it adds the right curly brace to the follow set of Expr_c.
    Adding to the follow sets of host language nonterminals is not
    allowed.  The fix is to replace curly braces with parenthesis.  
@@ -764,6 +774,7 @@ concrete productions top::SqliteExpr_c
 -- |  '$' '{' e::cnc:Expr_c '}'
 
 |  '$' '(' e::cnc:Expr_c ')'
+  layout {cnc:Spaces_t, cnc:NewLine_t, cnc:LineComment_t, cnc:BlockComment_t}
   {
     top.ast = abs:sqliteCExpr(e.ast);
     top.unparse = "?";
