@@ -1,6 +1,8 @@
 #include <sqlite.xh>
 #include <stdio.h>
 
+// Top level comment
+
 /* syntax error */
 int main(void)
 {
