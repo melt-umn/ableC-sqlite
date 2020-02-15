@@ -52,6 +52,7 @@ top::UseBit_c ::= sl::host_cnc:StringConstant_t tables::SqliteOptWithTables_c
 nonterminal SqliteOptWithTables_c with ast<abs:SqliteTableList>, location;
 concrete productions top::SqliteOptWithTables_c
 | 'with' '{' t::SqliteTableList_c '}'
+  layout {SqliteLineComment_t, host_cnc:BlockComment_t, host_cnc:Spaces_t, host_cnc:NewLine_t}
   {
     top.ast = t.ast;
   }
