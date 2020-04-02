@@ -8,13 +8,13 @@ import edu:umn:cs:melt:ableC:abstractsyntax:construction as host_abs;
 
 import edu:umn:cs:melt:exts:ableC:sqlite:abstractsyntax as abs;
 
-marking terminal SqliteUse_t 'use' lexer classes {Ckeyword};
+marking terminal SqliteUse_t 'use' lexer classes {host_cnc:Keyword, host_cnc:Global};
 
-terminal SqliteLcAs_t 'as';
-terminal SqliteLcWith_t 'with';
-terminal SqliteTable_t 'table';
-terminal SqliteVarchar_t 'VARCHAR';
-terminal SqliteInteger_t 'INTEGER';
+terminal SqliteLcAs_t 'as' lexer classes {host_cnc:Keyword};
+terminal SqliteLcWith_t 'with' lexer classes {host_cnc:Keyword};
+terminal SqliteTable_t 'table' lexer classes {host_cnc:Keyword};
+terminal SqliteVarchar_t 'VARCHAR' lexer classes {SqliteKeyword};
+terminal SqliteInteger_t 'INTEGER' lexer classes {SqliteKeyword};
 
 concrete production sqliteUse_c
 top::host_cnc:Stmt_c ::= 'use' u::UseBit_c
@@ -52,6 +52,7 @@ top::UseBit_c ::= sl::host_cnc:StringConstant_t tables::SqliteOptWithTables_c
 nonterminal SqliteOptWithTables_c with ast<abs:SqliteTableList>, location;
 concrete productions top::SqliteOptWithTables_c
 | 'with' '{' t::SqliteTableList_c '}'
+  layout {SqliteLineComment_t, host_cnc:BlockComment_t, host_cnc:Spaces_t, host_cnc:NewLine_t}
   {
     top.ast = t.ast;
   }

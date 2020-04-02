@@ -30,6 +30,8 @@ TESTS=$(XC_FILES:.xc=.test)
 XC_INCLUDE_DIRS=$(wildcard $(EXTS_BASE)/*/include)
 # Flags passed to ableC including the appropriate directories
 override XCFLAGS+=$(addprefix -I,$(XC_INCLUDE_DIRS))
+# Disable comment stripping in the C preprocessor, so we can test layout
+override XCFLAGS+=-C
 # Flags passed to Java when invoking ableC
 override JAVAFLAGS+=-Xss6M
 
