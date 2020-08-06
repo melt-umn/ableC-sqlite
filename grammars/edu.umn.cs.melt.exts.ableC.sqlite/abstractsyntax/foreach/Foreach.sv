@@ -15,6 +15,7 @@ top::Stmt ::= row::Name query::Expr body::Stmt
     row.pp, space(), query.pp, text("{"), line(), nestlines(2, body.pp), text("}")
   ]);
   top.functionDefs := body.functionDefs;
+  body.env = addEnv(rowDecl.defs, top.env);
   query.env = top.env;
 
   local localErrors :: [Message] =
@@ -112,13 +113,15 @@ top::Stmt ::= row::Name query::Expr body::Stmt
         ])
       )
     );
+  rowDecl.env = top.env;
+  rowDecl.returnType = top.returnType;
 
   local whileHasRow :: Stmt =
     whileStmt(
       mkErrorCheck(localErrors, hasRow),
       foldStmt([
-        rowDecl,
-        body
+        decStmt(rowDecl),
+        decStmt(body)
       ])
     );
 
