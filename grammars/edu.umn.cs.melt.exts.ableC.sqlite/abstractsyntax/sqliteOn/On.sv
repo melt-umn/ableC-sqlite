@@ -92,7 +92,7 @@ top::Stmt ::= db::Expr query::SqliteQuery queryName::Name
             queryName,
             baseTypeExpr(),
             nilAttribute(),
-            justInitializer(exprInitializer(callNew))
+            justInitializer(exprInitializer(callNew, location=builtIn()))
           )
         ])
       )

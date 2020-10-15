@@ -31,7 +31,7 @@ top::Stmt ::= dbFilename::Expr dbName::Name tableList::SqliteTableList
             dbName,
             baseTypeExpr(),
             nilAttribute(),
-            justInitializer(exprInitializer(callNew)))
+            justInitializer(exprInitializer(callNew, location=builtIn())))
         ])
       )
     );

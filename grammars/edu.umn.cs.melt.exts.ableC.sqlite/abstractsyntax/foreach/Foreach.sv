@@ -94,7 +94,8 @@ top::Stmt ::= row::Name query::Expr body::Stmt
       makeRowInit(
         columns,
         memberExpr(query, true, name("query", location=builtIn()), location=builtIn())
-      )
+      ),
+      location=builtIn()
     );
   -- struct { <column declarations> } ${row} = { <column initializations> } ;
   local rowDecl :: Stmt =
@@ -218,7 +219,8 @@ Init ::= col::SqliteColumn query::Expr colIndex::Integer
             mkIntConst(colIndex, builtIn())
           ]),
           location=builtIn()
-        )
+        ),
+        location=builtIn()
       )
     );
 }
