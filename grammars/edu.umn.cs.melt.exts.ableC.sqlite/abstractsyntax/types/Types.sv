@@ -32,7 +32,7 @@ top::Type ::= qs::Qualifiers tables::[tbls:SqliteTable]
             nilQualifier(),
             refIdExtType(
               structSEU(),
-              "_sqlite_db_s",
+              just("_sqlite_db_s"),
               "edu:umn:cs:melt:exts:ableC:sqlite:_sqlite_db_s"
             )
           )
@@ -67,7 +67,7 @@ top::Type ::= qs::Qualifiers columns::[abs:SqliteColumn]
             nilQualifier(),
             refIdExtType(
               structSEU(),
-              "_sqlite_query_s",
+              just("_sqlite_query_s"),
               "edu:umn:cs:melt:exts:ableC:sqlite:_sqlite_query_s"
             )
           )
