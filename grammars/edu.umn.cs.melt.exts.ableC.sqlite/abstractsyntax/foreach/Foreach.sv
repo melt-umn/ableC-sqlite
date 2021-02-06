@@ -16,6 +16,8 @@ top::Stmt ::= row::Name query::Expr body::Stmt
   ]);
   top.functionDefs := body.functionDefs;
   body.env = addEnv(rowDecl.defs, top.env);
+  body.breakValid = true;
+  body.continueValid = true;
   query.env = top.env;
 
   local localErrors :: [Message] =
