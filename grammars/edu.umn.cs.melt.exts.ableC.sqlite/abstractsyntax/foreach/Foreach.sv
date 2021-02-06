@@ -116,6 +116,8 @@ top::Stmt ::= row::Name query::Expr body::Stmt
     );
   rowDecl.env = top.env;
   rowDecl.returnType = top.returnType;
+  rowDecl.breakValid = top.breakValid;
+  rowDecl.continueValid = top.continueValid;
 
   local whileHasRow :: Stmt =
     whileStmt(
