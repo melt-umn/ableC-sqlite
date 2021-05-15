@@ -16,6 +16,7 @@ top::Stmt ::= row::Name query::Expr body::Stmt
   ]);
   top.functionDefs := body.functionDefs;
   body.env = addEnv(rowDecl.defs, top.env);
+  body.controlStmtContext = controlEnterLoop(top.controlStmtContext);
   query.env = top.env;
 
   local localErrors :: [Message] =
