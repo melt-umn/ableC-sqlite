@@ -15,6 +15,7 @@ top::Stmt ::= row::Name query::Expr body::Stmt
     row.pp, space(), query.pp, text("{"), line(), nestlines(2, body.pp), text("}")
   ]);
   top.functionDefs := body.functionDefs;
+  top.labelDefs := body.labelDefs;
   body.env = addEnv(rowDecl.defs, top.env);
   body.controlStmtContext = controlEnterLoop(top.controlStmtContext);
   query.env = top.env;
