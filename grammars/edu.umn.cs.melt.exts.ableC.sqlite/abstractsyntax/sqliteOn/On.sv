@@ -19,6 +19,7 @@ top::Stmt ::= db::Expr query::SqliteQuery queryName::Name
     db.pp, space(), queryName.pp
   ]);
   top.functionDefs := [];
+  top.labelDefs := [];
   db.env = top.env;
 
   local dbTables :: [SqliteTable] =
@@ -92,7 +93,7 @@ top::Stmt ::= db::Expr query::SqliteQuery queryName::Name
             queryName,
             baseTypeExpr(),
             nilAttribute(),
-            justInitializer(exprInitializer(callNew))
+            justInitializer(exprInitializer(callNew, location=builtIn()))
           )
         ])
       )
