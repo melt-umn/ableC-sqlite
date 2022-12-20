@@ -18,6 +18,7 @@ top::Stmt ::= db::Expr query::SqliteQuery queryName::Name
 --    db.pp, space(), query.pp, space(), queryName.pp
     db.pp, space(), queryName.pp
   ]);
+  propagate controlStmtContext;
   top.functionDefs := [];
   top.labelDefs := [];
   db.env = top.env;
@@ -200,7 +201,7 @@ abstract production makeBind
 top::Expr ::= exprParam::Expr queryName::Name i::Integer
 {
   top.pp = ppImplode(space(), [exprParam.pp, queryName.pp, text(toString(i))]);
-  exprParam.env = top.env;
+  propagate env, controlStmtContext;
 
   forwards to
     if isTextType(exprParam.typerep)
