@@ -12,11 +12,11 @@ top::Stmt ::= dbFilename::Expr dbName::Name tableList::SqliteTableList
   -- _new_sqlite_db(${dbFilename});
   local callNew :: Expr =
     directCallExpr(
-      name("_new_sqlite_db", location=builtIn()),
+      name("_new_sqlite_db", location=abs:builtin),
       foldExpr([
         dbFilename
       ]),
-      location=builtIn()
+      location=abs:builtin
     );
 
   -- _sqlite_db ${dbName} = _new_sqlite_db(${dbFilename});
@@ -31,19 +31,10 @@ top::Stmt ::= dbFilename::Expr dbName::Name tableList::SqliteTableList
             dbName,
             baseTypeExpr(),
             nilAttribute(),
-            justInitializer(exprInitializer(callNew, location=builtIn())))
+            justInitializer(exprInitializer(callNew, location=abs:builtin)))
         ])
       )
     );
 
   forwards to dbDecl;
 }
-
--- TODO: don't duplicate this
--- New location for expressions which don't have real locations
-abstract production builtIn
-top::Location ::=
-{
-  forwards to loc("Built In", 0, 0, 0, 0, 0, 0);
-}
-

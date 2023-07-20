@@ -77,9 +77,9 @@ top::Stmt ::= db::Expr query::SqliteQuery queryName::Name
   -- _new_sqlite_query();
   local callNew :: Expr =
     directCallExpr(
-      name("_new_sqlite_query", location=builtIn()),
+      name("_new_sqlite_query", location=abs:builtin),
       nilExpr(),
-      location=builtIn()
+      location=abs:builtin
     );
 
   -- _sqlite_query ${queryName} = _new_sqlite_query();
@@ -94,7 +94,7 @@ top::Stmt ::= db::Expr query::SqliteQuery queryName::Name
             queryName,
             baseTypeExpr(),
             nilAttribute(),
-            justInitializer(exprInitializer(callNew, location=builtIn()))
+            justInitializer(exprInitializer(callNew, location=abs:builtin))
           )
         ])
       )
@@ -103,23 +103,23 @@ top::Stmt ::= db::Expr query::SqliteQuery queryName::Name
   -- sqlite3_prepare(${db}.db, _query, sizeof(_query), &${queryName}.query, NULL);
   local callPrepare :: Expr =
     directCallExpr(
-      name("sqlite3_prepare_v2", location=builtIn()),
+      name("sqlite3_prepare_v2", location=abs:builtin),
       foldExpr([
-        memberExpr(db, true, name("db", location=builtIn()), location=builtIn()),
-        stringLiteral(quote(query.queryStr), location=builtIn()),
-        mkIntConst(length(query.queryStr)+1, builtIn()),
+        memberExpr(db, true, name("db", location=abs:builtin), location=abs:builtin),
+        stringLiteral(quote(query.queryStr), location=abs:builtin),
+        mkIntConst(length(query.queryStr)+1, abs:builtin),
         addressOfExpr(
           memberExpr(
-            declRefExpr(queryName, location=builtIn()),
+            declRefExpr(queryName, location=abs:builtin),
             true,
-            name("query", location=builtIn()),
-            location=builtIn()
+            name("query", location=abs:builtin),
+            location=abs:builtin
           ),
-          location=builtIn()
+          location=abs:builtin
         ),
-        mkIntConst(0, builtIn())
+        mkIntConst(0, abs:builtin)
       ]),
-      location=builtIn()
+      location=abs:builtin
     );
 
   forwards to
@@ -134,22 +134,22 @@ abstract production sqliteCommitDb
 top::Expr ::= db::Expr query::SqliteQuery
 {
   local queryName :: Name =
-    name("_commit_stmt", location=builtIn());
+    name("_commit_stmt", location=abs:builtin);
 
   local stepStmt :: Stmt =
     foreach:sqliteForeach(
-      name("_insert_step", location=builtIn()),
-      declRefExpr(queryName, location=builtIn()),
+      name("_insert_step", location=abs:builtin),
+      declRefExpr(queryName, location=abs:builtin),
       nullStmt()
     );
 
   local callFinalize :: Expr =
     directCallExpr(
-      name("finalize", location=builtIn()),
+      name("finalize", location=abs:builtin),
       foldExpr([
-        declRefExpr(queryName, location=builtIn())
+        declRefExpr(queryName, location=abs:builtin)
       ]),
-      location=builtIn()
+      location=abs:builtin
     );
 
   forwards to
@@ -161,14 +161,6 @@ top::Expr ::= db::Expr query::SqliteQuery
       callFinalize,
       location=top.location
     );
-}
-
--- TODO: don't duplicate this
--- New location for expressions which don't have real locations
-abstract production builtIn
-top::Location ::=
-{
-  forwards to loc("Built In", 0, 0, 0, 0, 0, 0);
 }
 
 abstract production makeBinds
@@ -191,7 +183,7 @@ top::Stmt ::= exprParams::[Expr] queryName::Name i::Integer
     then nullStmt()
     else seqStmt(
            exprStmt(
-             makeBind(head(exprParams), queryName, i, location=builtIn())
+             makeBind(head(exprParams), queryName, i, location=abs:builtin)
            ),
            makeBindsHelper(tail(exprParams), queryName, i+1)
          );
@@ -205,8 +197,8 @@ top::Expr ::= exprParam::Expr queryName::Name i::Integer
 
   forwards to
     if isTextType(exprParam.typerep)
-    then makeBindText(exprParam, queryName, i, location=builtIn())
-    else makeBindInt(exprParam, queryName, i, location=builtIn());
+    then makeBindText(exprParam, queryName, i, location=abs:builtin)
+    else makeBindInt(exprParam, queryName, i, location=abs:builtin);
 }
 
 function isTextType
@@ -236,20 +228,20 @@ top::Expr ::= exprParam::Expr queryName::Name i::Integer
 {
   forwards to
     directCallExpr(
-      name("sqlite3_bind_text", location=builtIn()),
+      name("sqlite3_bind_text", location=abs:builtin),
       foldExpr([
         memberExpr(
-          declRefExpr(queryName, location=builtIn()),
+          declRefExpr(queryName, location=abs:builtin),
           true,
-          name("query", location=builtIn()),
-          location=builtIn()
+          name("query", location=abs:builtin),
+          location=abs:builtin
         ),
-        mkIntConst(i, builtIn()),
+        mkIntConst(i, abs:builtin),
         exprParam,
-        mkIntConst(-1, builtIn()),
-        mkIntConst(0, builtIn())
+        mkIntConst(-1, abs:builtin),
+        mkIntConst(0, abs:builtin)
       ]),
-      location=builtIn()
+      location=abs:builtin
     );
 }
 
@@ -258,18 +250,18 @@ top::Expr ::= exprParam::Expr queryName::Name i::Integer
 {
   forwards to
     directCallExpr(
-      name("sqlite3_bind_int", location=builtIn()),
+      name("sqlite3_bind_int", location=abs:builtin),
       foldExpr([
         memberExpr(
-          declRefExpr(queryName, location=builtIn()),
+          declRefExpr(queryName, location=abs:builtin),
           true,
-          name("query", location=builtIn()),
-          location=builtIn()
+          name("query", location=abs:builtin),
+          location=abs:builtin
         ),
-        mkIntConst(i, builtIn()),
+        mkIntConst(i, abs:builtin),
         exprParam
       ]),
-      location=builtIn()
+      location=abs:builtin
     );
 }
 
