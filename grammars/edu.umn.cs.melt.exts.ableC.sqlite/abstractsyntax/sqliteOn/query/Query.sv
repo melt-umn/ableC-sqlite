@@ -8,7 +8,7 @@ imports edu:umn:cs:melt:ableC:abstractsyntax:host;
 imports edu:umn:cs:melt:ableC:abstractsyntax:construction;
 imports silver:langutil;
 
-nonterminal SqliteQuery with queryStr, usedTables, usedColumns, selectedTables, resultColumns, exprParams, modTables;
+tracked nonterminal SqliteQuery with queryStr, usedTables, usedColumns, selectedTables, resultColumns, exprParams, modTables;
 synthesized attribute queryStr :: String;
 synthesized attribute usedTables :: [Name];
 synthesized attribute usedColumns :: [SqliteResultColumnName];
@@ -52,7 +52,7 @@ top::SqliteQuery ::= d::SqliteDeleteStmt queryStr::String
   top.modTables = [];
 }
 
-nonterminal SqliteSelectStmt with usedTables, usedColumns, selectedTables, resultColumns, exprParams;
+tracked nonterminal SqliteSelectStmt with usedTables, usedColumns, selectedTables, resultColumns, exprParams;
 abstract production sqliteSelectStmt
 top::SqliteSelectStmt ::= mw::Maybe<SqliteWith> s::SqliteSelectCore mo::Maybe<SqliteOrder> ml::Maybe<SqliteLimit>
 {
@@ -82,7 +82,7 @@ top::SqliteSelectStmt ::= mw::Maybe<SqliteWith> s::SqliteSelectCore mo::Maybe<Sq
   top.exprParams = wExprParams ++ s.exprParams ++ oExprParams ++ lExprParams;
 }
 
-nonterminal SqliteWith with usedTables, usedColumns, exprParams;
+tracked nonterminal SqliteWith with usedTables, usedColumns, exprParams;
 abstract production sqliteWith
 top::SqliteWith ::= isRecursive::Boolean cs::SqliteCommonTableExprList
 {
@@ -91,7 +91,7 @@ top::SqliteWith ::= isRecursive::Boolean cs::SqliteCommonTableExprList
   top.exprParams = cs.exprParams;
 }
 
-nonterminal SqliteCommonTableExprList with usedTables, usedColumns, exprParams;
+tracked nonterminal SqliteCommonTableExprList with usedTables, usedColumns, exprParams;
 abstract production sqliteCommonTableExprList
 top::SqliteCommonTableExprList ::= c::SqliteCommonTableExpr cs::SqliteCommonTableExprList
 {
@@ -107,7 +107,7 @@ top::SqliteCommonTableExprList ::=
   top.exprParams = [];
 }
 
-nonterminal SqliteCommonTableExpr with usedTables, usedColumns, exprParams;
+tracked nonterminal SqliteCommonTableExpr with usedTables, usedColumns, exprParams;
 abstract production sqliteCommonTableExpr
 top::SqliteCommonTableExpr ::= tableName::Name s::SqliteSelectStmt mcs::Maybe<SqliteColumnNameList>
 {
@@ -120,7 +120,7 @@ top::SqliteCommonTableExpr ::= tableName::Name s::SqliteSelectStmt mcs::Maybe<Sq
   top.exprParams = s.exprParams;
 }
 
-nonterminal SqliteSelectCore with usedTables, usedColumns, selectedTables, resultColumns, exprParams;
+tracked nonterminal SqliteSelectCore with usedTables, usedColumns, selectedTables, resultColumns, exprParams;
 abstract production sqliteSelectCoreSelect
 top::SqliteSelectCore ::= s::SqliteSelect
 {
@@ -140,7 +140,7 @@ top::SqliteSelectCore ::= v::SqliteValues
   top.exprParams = v.exprParams;
 }
 
-nonterminal SqliteSelect with usedTables, usedColumns, selectedTables, resultColumns, exprParams;
+tracked nonterminal SqliteSelect with usedTables, usedColumns, selectedTables, resultColumns, exprParams;
 abstract production sqliteSelect
 top::SqliteSelect ::= md::Maybe<SqliteDistinctOrAll> rs::SqliteResultColumnList mf::Maybe<SqliteFrom>
                       mw::Maybe<SqliteWhere> mg::Maybe<SqliteGroup>
@@ -171,7 +171,7 @@ top::SqliteSelect ::= md::Maybe<SqliteDistinctOrAll> rs::SqliteResultColumnList 
   top.exprParams = rs.exprParams ++ fExprParams ++ wExprParams ++ gExprParams;
 }
 
-nonterminal SqliteDistinctOrAll;
+tracked nonterminal SqliteDistinctOrAll;
 abstract production sqliteDistinct
 top::SqliteDistinctOrAll ::=
 {
@@ -181,7 +181,7 @@ top::SqliteDistinctOrAll ::=
 {
 }
 
-nonterminal SqliteResultColumnList with usedTables, usedColumns, resultColumns, exprParams;
+tracked nonterminal SqliteResultColumnList with usedTables, usedColumns, resultColumns, exprParams;
 abstract production sqliteResultColumnList
 top::SqliteResultColumnList ::= r::SqliteResultColumn rs::SqliteResultColumnList
 {
@@ -199,7 +199,7 @@ top::SqliteResultColumnList ::=
   top.exprParams = [];
 }
 
-nonterminal SqliteResultColumn with usedTables, usedColumns, resultColumn, exprParams;
+tracked nonterminal SqliteResultColumn with usedTables, usedColumns, resultColumn, exprParams;
 synthesized attribute resultColumn :: SqliteResultColumnName;
 abstract production sqliteResultColumnExpr
 top::SqliteResultColumn ::= e::SqliteExpr mc::Maybe<SqliteAsColumnAlias>
@@ -252,7 +252,7 @@ top::SqliteResultColumn ::= tableName::Name
   top.exprParams = [];
 }
 
-nonterminal SqliteAsColumnAlias with columnAlias;
+tracked nonterminal SqliteAsColumnAlias with columnAlias;
 synthesized attribute columnAlias :: Name;
 abstract production sqliteAsColumnAlias
 top::SqliteAsColumnAlias ::= columnAlias::Name
@@ -260,7 +260,7 @@ top::SqliteAsColumnAlias ::= columnAlias::Name
   top.columnAlias = columnAlias;
 }
 
-nonterminal SqliteFrom with usedTables, usedColumns, exprParams;
+tracked nonterminal SqliteFrom with usedTables, usedColumns, exprParams;
 abstract production sqliteFrom
 top::SqliteFrom ::= t::SqliteTableOrSubqueryListOrJoin
 {
@@ -269,7 +269,7 @@ top::SqliteFrom ::= t::SqliteTableOrSubqueryListOrJoin
   top.exprParams = t.exprParams;
 }
 
-nonterminal SqliteTableOrSubqueryListOrJoin with usedTables, usedColumns, exprParams;
+tracked nonterminal SqliteTableOrSubqueryListOrJoin with usedTables, usedColumns, exprParams;
 abstract production sqliteTableOrSubqueryListOrJoin
 top::SqliteTableOrSubqueryListOrJoin ::= j::SqliteJoinClause
 {
@@ -278,7 +278,7 @@ top::SqliteTableOrSubqueryListOrJoin ::= j::SqliteJoinClause
   top.exprParams = j.exprParams;
 }
 
-nonterminal SqliteJoinClause with usedTables, usedColumns, exprParams;
+tracked nonterminal SqliteJoinClause with usedTables, usedColumns, exprParams;
 abstract production sqliteJoinClause
 top::SqliteJoinClause ::= t::SqliteTableOrSubquery mj::Maybe<SqliteJoinList>
 {
@@ -291,7 +291,7 @@ top::SqliteJoinClause ::= t::SqliteTableOrSubquery mj::Maybe<SqliteJoinList>
   top.exprParams = case mj of just(j) -> j.exprParams | nothing() -> [] end;
 }
 
-nonterminal SqliteTableOrSubquery with table;
+tracked nonterminal SqliteTableOrSubquery with table;
 synthesized attribute table :: Name;
 abstract production sqliteTableOrSubquery
 top::SqliteTableOrSubquery ::= tableName::Name
@@ -299,7 +299,7 @@ top::SqliteTableOrSubquery ::= tableName::Name
   top.table = tableName;
 }
 
-nonterminal SqliteJoinList with usedTables, usedColumns, exprParams;
+tracked nonterminal SqliteJoinList with usedTables, usedColumns, exprParams;
 abstract production sqliteJoinList
 top::SqliteJoinList ::= j::SqliteJoin js::SqliteJoinList
 {
@@ -316,7 +316,7 @@ top::SqliteJoinList ::=
   top.exprParams = [];
 }
 
-nonterminal SqliteJoin with usedTables, usedColumns, exprParams;
+tracked nonterminal SqliteJoin with usedTables, usedColumns, exprParams;
 abstract production sqliteJoin
 top::SqliteJoin ::= o::SqliteJoinOperator t::SqliteTableOrSubquery mc::Maybe<SqliteJoinConstraint>
 {
@@ -328,13 +328,13 @@ top::SqliteJoin ::= o::SqliteJoinOperator t::SqliteTableOrSubquery mc::Maybe<Sql
   top.exprParams = case mc of just(c) -> c.exprParams | nothing() -> [] end;
 }
 
-nonterminal SqliteJoinOperator;
+tracked nonterminal SqliteJoinOperator;
 abstract production sqliteJoinOperator
 top::SqliteJoinOperator ::= isNatural::Boolean ml::Maybe<SqliteLeftOrInnerOrCross>
 {
 }
 
-nonterminal SqliteLeftOrInnerOrCross;
+tracked nonterminal SqliteLeftOrInnerOrCross;
 abstract production sqliteLeft
 top::SqliteLeftOrInnerOrCross ::= isOuter::Boolean
 {
@@ -348,7 +348,7 @@ top::SqliteLeftOrInnerOrCross ::=
 {
 }
 
-nonterminal SqliteJoinConstraint with usedTables, usedColumns, exprParams;
+tracked nonterminal SqliteJoinConstraint with usedTables, usedColumns, exprParams;
 abstract production sqliteOnConstraint
 top::SqliteJoinConstraint ::= e::SqliteExpr
 {
@@ -364,7 +364,7 @@ top::SqliteJoinConstraint ::= cs::SqliteColumnNameList
   top.exprParams = [];
 }
 
-nonterminal SqliteWhere with usedTables, usedColumns, exprParams;
+tracked nonterminal SqliteWhere with usedTables, usedColumns, exprParams;
 abstract production sqliteWhere
 top::SqliteWhere ::= e::SqliteExpr
 {
@@ -373,7 +373,7 @@ top::SqliteWhere ::= e::SqliteExpr
   top.exprParams = e.exprParams;
 }
 
-nonterminal SqliteGroup with usedTables, usedColumns, exprParams;
+tracked nonterminal SqliteGroup with usedTables, usedColumns, exprParams;
 abstract production sqliteGroup
 top::SqliteGroup ::= es::SqliteExprList mh::Maybe<SqliteHaving>
 {
@@ -394,7 +394,7 @@ top::SqliteGroup ::= es::SqliteExprList mh::Maybe<SqliteHaving>
     end;
 }
 
-nonterminal SqliteHaving with usedTables, usedColumns, exprParams;
+tracked nonterminal SqliteHaving with usedTables, usedColumns, exprParams;
 abstract production sqliteHaving
 top::SqliteHaving ::= e::SqliteExpr
 {
@@ -403,7 +403,7 @@ top::SqliteHaving ::= e::SqliteExpr
   top.exprParams = e.exprParams;
 }
 
-nonterminal SqliteValues with usedTables, usedColumns, selectedTables, resultColumns, exprParams;
+tracked nonterminal SqliteValues with usedTables, usedColumns, selectedTables, resultColumns, exprParams;
 abstract production sqliteValues
 top::SqliteValues ::= es::SqliteExprListList
 {
@@ -432,7 +432,7 @@ top::SqliteValues ::=
   top.resultColumns = [];
 }
 
-nonterminal SqliteExprListList with usedTables, usedColumns, exprParams;
+tracked nonterminal SqliteExprListList with usedTables, usedColumns, exprParams;
 abstract production sqliteExprListList
 top::SqliteExprListList ::= e::SqliteExprList es::SqliteExprListList
 {
@@ -448,7 +448,7 @@ top::SqliteExprListList ::=
   top.exprParams = [];
 }
 
-nonterminal SqliteExprList with usedTables, usedColumns, exprParams;
+tracked nonterminal SqliteExprList with usedTables, usedColumns, exprParams;
 abstract production sqliteExprList
 top::SqliteExprList ::= e::SqliteExpr es::SqliteExprList
 {
@@ -464,7 +464,7 @@ top::SqliteExprList ::=
   top.exprParams = [];
 }
 
-nonterminal SqliteExpr with usedTables, usedColumns, exprParams;
+tracked nonterminal SqliteExpr with usedTables, usedColumns, exprParams;
 abstract production sqliteLiteralValueExpr
 top::SqliteExpr ::=
 {
@@ -514,7 +514,7 @@ top::SqliteExpr ::= e::Expr
   top.exprParams = [e];
 }
 
-nonterminal SqliteSchemaTableColumnName with colName;
+tracked nonterminal SqliteSchemaTableColumnName with colName;
 synthesized attribute colName :: SqliteResultColumnName;
 abstract production sqliteSchemaTableColumnName
 top::SqliteSchemaTableColumnName ::= schemaName::Name tableName::Name colName::Name
@@ -532,7 +532,7 @@ top::SqliteSchemaTableColumnName ::= colName::Name
   top.colName = sqliteResultColumnName(just(colName), nothing(), nothing());
 }
 
-nonterminal SqliteFunctionArgs with usedTables, usedColumns, exprParams;
+tracked nonterminal SqliteFunctionArgs with usedTables, usedColumns, exprParams;
 abstract production sqliteFunctionArgs
 top::SqliteFunctionArgs ::= isDistinct::Boolean es::SqliteExprList
 {
@@ -548,7 +548,7 @@ top::SqliteFunctionArgs ::=
   top.exprParams = [];
 }
 
-nonterminal SqliteColumnNameList with usedColumns;
+tracked nonterminal SqliteColumnNameList with usedColumns;
 abstract production sqliteColumnNameList
 top::SqliteColumnNameList ::= c::Name cs::SqliteColumnNameList
 {
@@ -564,7 +564,7 @@ top::SqliteColumnNameList ::=
   top.usedColumns = [];
 }
 
-nonterminal SqliteOrder with usedTables, usedColumns, exprParams;
+tracked nonterminal SqliteOrder with usedTables, usedColumns, exprParams;
 abstract production sqliteOrder
 top::SqliteOrder ::= os::SqliteOrderingTermList
 {
@@ -573,7 +573,7 @@ top::SqliteOrder ::= os::SqliteOrderingTermList
   top.exprParams = os.exprParams;
 }
 
-nonterminal SqliteOrderingTermList with usedTables, usedColumns, exprParams;
+tracked nonterminal SqliteOrderingTermList with usedTables, usedColumns, exprParams;
 abstract production sqliteOrderingTermList
 top::SqliteOrderingTermList ::= o::SqliteOrderingTerm os::SqliteOrderingTermList
 {
@@ -589,7 +589,7 @@ top::SqliteOrderingTermList ::=
   top.exprParams = [];
 }
 
-nonterminal SqliteOrderingTerm with usedTables, usedColumns, exprParams;
+tracked nonterminal SqliteOrderingTerm with usedTables, usedColumns, exprParams;
 abstract production sqliteOrderingTerm
 top::SqliteOrderingTerm ::= e::SqliteExpr mc::Maybe<SqliteCollate>
 {
@@ -598,13 +598,13 @@ top::SqliteOrderingTerm ::= e::SqliteExpr mc::Maybe<SqliteCollate>
   top.exprParams = e.exprParams;
 }
 
-nonterminal SqliteCollate;
+tracked nonterminal SqliteCollate;
 abstract production sqliteCollate
 top::SqliteCollate ::= collationName::Name
 {
 }
 
-nonterminal SqliteLimit with usedTables, usedColumns, exprParams;
+tracked nonterminal SqliteLimit with usedTables, usedColumns, exprParams;
 abstract production sqliteLimit
 top::SqliteLimit ::= e::SqliteExpr mo::Maybe<SqliteOffsetExpr>
 {
@@ -625,7 +625,7 @@ top::SqliteLimit ::= e::SqliteExpr mo::Maybe<SqliteOffsetExpr>
     end;
 }
 
-nonterminal SqliteOffsetExpr with usedTables, usedColumns, exprParams;
+tracked nonterminal SqliteOffsetExpr with usedTables, usedColumns, exprParams;
 abstract production sqliteOffsetExpr
 top::SqliteOffsetExpr ::= e::SqliteExpr
 {
@@ -634,7 +634,7 @@ top::SqliteOffsetExpr ::= e::SqliteExpr
   top.exprParams = e.exprParams;
 }
 
-nonterminal SqliteInsertStmt with usedTables, usedColumns, selectedTables, exprParams, modTable;
+tracked nonterminal SqliteInsertStmt with usedTables, usedColumns, selectedTables, exprParams, modTable;
 synthesized attribute modTable :: Name;
 abstract production sqliteInsertStmt
 top::SqliteInsertStmt ::= mw::Maybe<SqliteWith> s::SqliteSchemaTableName
@@ -655,7 +655,7 @@ top::SqliteInsertStmt ::= mw::Maybe<SqliteWith> s::SqliteSchemaTableName
   top.modTable = s.tName;
 }
 
-nonterminal SqliteSchemaTableName with mSchemaName, tName;
+tracked nonterminal SqliteSchemaTableName with mSchemaName, tName;
 synthesized attribute mSchemaName :: Maybe<Name>;
 synthesized attribute tName :: Name;
 abstract production sqliteSchemaTableName
@@ -671,7 +671,7 @@ top::SqliteSchemaTableName ::= tableName::Name
   top.tName = tableName;
 }
 
-nonterminal SqliteDeleteStmt with usedTables, usedColumns, selectedTables, exprParams;
+tracked nonterminal SqliteDeleteStmt with usedTables, usedColumns, selectedTables, exprParams;
 abstract production sqliteDeleteStmt
 top::SqliteDeleteStmt ::= mw::Maybe<SqliteWith> s::SqliteSchemaTableName
                           mwh::Maybe<SqliteWhere>
@@ -700,7 +700,7 @@ function checkTablesExist
   local foundTable :: Name = head(foundTables);
   local localErrors :: [Message] =
     if tableExistsIn(expectedTables, foundTable) then []
-    else [err(foundTable.location, "no such table: " ++ foundTable.name)];
+    else [errFromOrigin(foundTable, "no such table: " ++ foundTable.name)];
 
   return if null(foundTables) then []
          else localErrors ++ checkTablesExist(tail(foundTables), expectedTables);
@@ -757,9 +757,8 @@ Message ::= col::SqliteResultColumnName
                              error("selecting expressions as result column not supported yet")
                          end
         end
-    -- FIXME: get the real * location
-    | sqliteResultColumnNameStar()               -> name("*", location=abs:builtin)
-    | sqliteResultColumnNameTableStar(tableName) -> name("*", location=tableName.location)
+    | sqliteResultColumnNameStar()               -> name("*")
+    | sqliteResultColumnNameTableStar(tableName) -> attachNote logicalLocationFromOrigin(tableName) on name("*") end
     end;
   local mTableName :: Maybe<Name> =
     case col of
@@ -769,10 +768,10 @@ Message ::= col::SqliteResultColumnName
     end;
   local fullName :: Name =
     case mTableName of
-      just(tableName) -> name(tableName.name ++ "." ++ colName.name, location=tableName.location)
+      just(tableName) -> attachNote logicalLocationFromOrigin(tableName) on name(tableName.name ++ "." ++ colName.name) end
     | nothing()       -> colName
     end;
-  return err(fullName.location, "no such column: " ++ fullName.name);
+  return errFromOrigin(fullName, "no such column: " ++ fullName.name);
 }
 
 function filterUnknownColumns

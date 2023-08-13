@@ -96,12 +96,12 @@ terminal SqliteIdentifier_t /[A-Za-z_\$][A-Za-z_0-9\$]*/ lexer classes {cnc:Iden
 function fromId
 abs:Name ::= id::SqliteIdentifier_t
 {
-  return abs:name(id.lexeme, location=id.location);
+  return abs:name(id.lexeme);
 }
 
 terminal SqliteLineComment_t /\-\-.*/ lexer classes {cnc:Comment};
 
-nonterminal SqliteQueryBlock_c with location, ast<abs:SqliteQuery>;
+tracked nonterminal SqliteQueryBlock_c with location, ast<abs:SqliteQuery>;
 concrete productions top::SqliteQueryBlock_c
 | '{' query::SqliteQuery_c '}'
   layout {SqliteLineComment_t, cnc:BlockComment_t, cnc:Spaces_t, cnc:NewLine_t}
@@ -109,7 +109,7 @@ concrete productions top::SqliteQueryBlock_c
     top.ast = query.ast;
   }
 
-nonterminal SqliteQuery_c with location, ast<abs:SqliteQuery>;
+tracked nonterminal SqliteQuery_c with location, ast<abs:SqliteQuery>;
 concrete productions top::SqliteQuery_c
 | s::SqliteSelectStmt_c
   {
@@ -125,7 +125,7 @@ concrete productions top::SqliteQuery_c
   }
 
 -- TODO: implement the full Select statement, this only supports Simple Select
-nonterminal SqliteSelectStmt_c with location, ast<abs:SqliteSelectStmt>, unparse;
+tracked nonterminal SqliteSelectStmt_c with location, ast<abs:SqliteSelectStmt>, unparse;
 synthesized attribute unparse :: String;
 concrete productions top::SqliteSelectStmt_c
 | w::SqliteOptWith_c s::SqliteSelectCore_c o::SqliteOptOrder_c l::SqliteOptLimit_c
@@ -134,7 +134,7 @@ concrete productions top::SqliteSelectStmt_c
     top.unparse = w.unparse ++ s.unparse ++ o.unparse ++ l.unparse;
   }
 
-nonterminal SqliteOptWith_c with location, ast<Maybe<abs:SqliteWith>>, unparse;
+tracked nonterminal SqliteOptWith_c with location, ast<Maybe<abs:SqliteWith>>, unparse;
 concrete productions top::SqliteOptWith_c
 | w::SqliteWith_c
   {
@@ -147,7 +147,7 @@ concrete productions top::SqliteOptWith_c
     top.unparse = "";
   }
 
-nonterminal SqliteWith_c with location, ast<abs:SqliteWith>, unparse;
+tracked nonterminal SqliteWith_c with location, ast<abs:SqliteWith>, unparse;
 concrete productions top::SqliteWith_c
 | SqliteWith_t r::SqliteOptRecursive_c cs::SqliteCommonTableExprList_c
   {
@@ -155,7 +155,7 @@ concrete productions top::SqliteWith_c
     top.unparse = r.unparse ++ "WITH " ++ cs.unparse;
   }
 
-nonterminal SqliteOptRecursive_c with location, ast<Boolean>, unparse;
+tracked nonterminal SqliteOptRecursive_c with location, ast<Boolean>, unparse;
 concrete productions top::SqliteOptRecursive_c
 | SqliteRecursive_t
   {
@@ -168,7 +168,7 @@ concrete productions top::SqliteOptRecursive_c
     top.unparse = "";
   }
 
-nonterminal SqliteCommonTableExprList_c with location, ast<abs:SqliteCommonTableExprList>, unparse;
+tracked nonterminal SqliteCommonTableExprList_c with location, ast<abs:SqliteCommonTableExprList>, unparse;
 concrete productions top::SqliteCommonTableExprList_c
 | cs::SqliteCommonTableExprList_c ',' c::SqliteCommonTableExpr_c
   {
@@ -181,7 +181,7 @@ concrete productions top::SqliteCommonTableExprList_c
     top.unparse = c.unparse;
   }
 
-nonterminal SqliteCommonTableExpr_c with location, ast<abs:SqliteCommonTableExpr>, unparse;
+tracked nonterminal SqliteCommonTableExpr_c with location, ast<abs:SqliteCommonTableExpr>, unparse;
 concrete productions top::SqliteCommonTableExpr_c
 | tableName::SqliteIdentifier_t cs::SqliteOptColumnNameList_c SqliteAs_t '(' s::SqliteSelectStmt_c ')'
   {
@@ -189,7 +189,7 @@ concrete productions top::SqliteCommonTableExpr_c
     top.unparse = tableName.lexeme ++ cs.unparse ++ " AS (" ++ s.unparse ++ ")";
   }
 
-nonterminal SqliteSelectCore_c with location, ast<abs:SqliteSelectCore>, unparse;
+tracked nonterminal SqliteSelectCore_c with location, ast<abs:SqliteSelectCore>, unparse;
 concrete productions top::SqliteSelectCore_c
 | s::SqliteSelect_c
   {
@@ -202,7 +202,7 @@ concrete productions top::SqliteSelectCore_c
     top.unparse = v.unparse;
   }
 
-nonterminal SqliteSelect_c with location, ast<abs:SqliteSelect>, unparse;
+tracked nonterminal SqliteSelect_c with location, ast<abs:SqliteSelect>, unparse;
 concrete productions top::SqliteSelect_c
 | SqliteSelect_t d::SqliteOptDistinctOrAll_c rs::SqliteResultColumnList_c f::SqliteOptFrom_c
       w::SqliteOptWhere_c g::SqliteOptGroup_c
@@ -211,7 +211,7 @@ concrete productions top::SqliteSelect_c
     top.unparse = "SELECT " ++ d.unparse ++ rs.unparse ++ f.unparse ++ w.unparse ++ g.unparse;
   }
 
-nonterminal SqliteOptDistinctOrAll_c with location, ast<Maybe<abs:SqliteDistinctOrAll>>, unparse;
+tracked nonterminal SqliteOptDistinctOrAll_c with location, ast<Maybe<abs:SqliteDistinctOrAll>>, unparse;
 concrete productions top::SqliteOptDistinctOrAll_c
 | SqliteDistinct_t
   {
@@ -229,7 +229,7 @@ concrete productions top::SqliteOptDistinctOrAll_c
     top.unparse = "";
   }
 
-nonterminal SqliteResultColumnList_c with location, ast<abs:SqliteResultColumnList>, unparse;
+tracked nonterminal SqliteResultColumnList_c with location, ast<abs:SqliteResultColumnList>, unparse;
 concrete productions top::SqliteResultColumnList_c
 | rs::SqliteResultColumnList_c ',' r::SqliteResultColumn_c
   {
@@ -242,7 +242,7 @@ concrete productions top::SqliteResultColumnList_c
     top.unparse = r.unparse;
   }
 
-nonterminal SqliteResultColumn_c with location, ast<abs:SqliteResultColumn>, unparse;
+tracked nonterminal SqliteResultColumn_c with location, ast<abs:SqliteResultColumn>, unparse;
 concrete productions top::SqliteResultColumn_c
 | e::SqliteExpr_c c::SqliteOptAsColumnAlias_c
   {
@@ -260,7 +260,7 @@ concrete productions top::SqliteResultColumn_c
     top.unparse = tableName.lexeme ++ ".*";
   }
 
-nonterminal SqliteOptAsColumnAlias_c with location, ast<Maybe<abs:SqliteAsColumnAlias>>, unparse;
+tracked nonterminal SqliteOptAsColumnAlias_c with location, ast<Maybe<abs:SqliteAsColumnAlias>>, unparse;
 concrete productions top::SqliteOptAsColumnAlias_c
 | a::SqliteAsColumnAlias_c
   {
@@ -273,7 +273,7 @@ concrete productions top::SqliteOptAsColumnAlias_c
     top.unparse = "";
   }
 
-nonterminal SqliteAsColumnAlias_c with location, ast<abs:SqliteAsColumnAlias>, unparse;
+tracked nonterminal SqliteAsColumnAlias_c with location, ast<abs:SqliteAsColumnAlias>, unparse;
 concrete productions top::SqliteAsColumnAlias_c
 | a::SqliteOptAs_c columnAlias::SqliteIdentifier_t
   {
@@ -281,7 +281,7 @@ concrete productions top::SqliteAsColumnAlias_c
     top.unparse = a.unparse ++ columnAlias.lexeme;
   }
 
-nonterminal SqliteOptAs_c with location, unparse;
+tracked nonterminal SqliteOptAs_c with location, unparse;
 concrete productions top::SqliteOptAs_c
 | SqliteAs_t
   {
@@ -292,7 +292,7 @@ concrete productions top::SqliteOptAs_c
     top.unparse = "";
   }
 
-nonterminal SqliteOptFrom_c with location, ast<Maybe<abs:SqliteFrom>>, unparse;
+tracked nonterminal SqliteOptFrom_c with location, ast<Maybe<abs:SqliteFrom>>, unparse;
 concrete productions top::SqliteOptFrom_c
 | f::SqliteFrom_c
   {
@@ -305,7 +305,7 @@ concrete productions top::SqliteOptFrom_c
     top.unparse = "";
   }
 
-nonterminal SqliteFrom_c with location, ast<abs:SqliteFrom>, unparse;
+tracked nonterminal SqliteFrom_c with location, ast<abs:SqliteFrom>, unparse;
 concrete productions top::SqliteFrom_c
 | SqliteFrom_t t::SqliteTableOrSubqueryListOrJoin_c
   {
@@ -313,7 +313,7 @@ concrete productions top::SqliteFrom_c
     top.unparse = " FROM " ++ t.unparse;
   }
 
-nonterminal SqliteTableOrSubqueryListOrJoin_c with location, ast<abs:SqliteTableOrSubqueryListOrJoin>, unparse;
+tracked nonterminal SqliteTableOrSubqueryListOrJoin_c with location, ast<abs:SqliteTableOrSubqueryListOrJoin>, unparse;
 concrete productions top::SqliteTableOrSubqueryListOrJoin_c
 -- This seems to be ambiguous with SqliteJoinClause_c?
 --| SqliteTableOrSubqueryList_c
@@ -335,7 +335,7 @@ concrete productions top::SqliteTableOrSubqueryListOrJoin_c
 --  }
 
 -- TODO: complete
-nonterminal SqliteTableOrSubquery_c with location, ast<abs:SqliteTableOrSubquery>, unparse;
+tracked nonterminal SqliteTableOrSubquery_c with location, ast<abs:SqliteTableOrSubquery>, unparse;
 concrete productions top::SqliteTableOrSubquery_c
 | tableName::SqliteIdentifier_t
   {
@@ -343,7 +343,7 @@ concrete productions top::SqliteTableOrSubquery_c
     top.unparse = tableName.lexeme;
   }
 
-nonterminal SqliteJoinClause_c with location, ast<abs:SqliteJoinClause>, unparse;
+tracked nonterminal SqliteJoinClause_c with location, ast<abs:SqliteJoinClause>, unparse;
 concrete productions top::SqliteJoinClause_c
 | t::SqliteTableOrSubquery_c j::SqliteOptJoinList_c
   {
@@ -351,7 +351,7 @@ concrete productions top::SqliteJoinClause_c
     top.unparse = t.unparse ++ j.unparse;
   }
 
-nonterminal SqliteOptJoinList_c with location, ast<Maybe<abs:SqliteJoinList>>, unparse;
+tracked nonterminal SqliteOptJoinList_c with location, ast<Maybe<abs:SqliteJoinList>>, unparse;
 concrete productions top::SqliteOptJoinList_c
 | js::SqliteJoinList_c
   {
@@ -364,7 +364,7 @@ concrete productions top::SqliteOptJoinList_c
     top.unparse = "";
   }
 
-nonterminal SqliteJoinList_c with location, ast<abs:SqliteJoinList>, unparse;
+tracked nonterminal SqliteJoinList_c with location, ast<abs:SqliteJoinList>, unparse;
 concrete productions top::SqliteJoinList_c
 | js::SqliteJoinList_c j::SqliteJoin_c
   {
@@ -377,7 +377,7 @@ concrete productions top::SqliteJoinList_c
     top.unparse = j.unparse;
   }
 
-nonterminal SqliteJoin_c with location, ast<abs:SqliteJoin>, unparse;
+tracked nonterminal SqliteJoin_c with location, ast<abs:SqliteJoin>, unparse;
 concrete productions top::SqliteJoin_c
 | o::SqliteJoinOperator_c t::SqliteTableOrSubquery_c c::SqliteJoinConstraint_c
   {
@@ -385,7 +385,7 @@ concrete productions top::SqliteJoin_c
     top.unparse = o.unparse ++ t.unparse ++ c.unparse;
   }
 
-nonterminal SqliteJoinOperator_c with location, ast<abs:SqliteJoinOperator>, unparse;
+tracked nonterminal SqliteJoinOperator_c with location, ast<abs:SqliteJoinOperator>, unparse;
 concrete productions top::SqliteJoinOperator_c
 | ','
   {
@@ -398,7 +398,7 @@ concrete productions top::SqliteJoinOperator_c
     top.unparse = n.unparse ++ l.unparse ++ " JOIN ";
   }
 
-nonterminal SqliteOptNatural_c with location, ast<Boolean>, unparse;
+tracked nonterminal SqliteOptNatural_c with location, ast<Boolean>, unparse;
 concrete productions top::SqliteOptNatural_c
 | SqliteNatural_t
   {
@@ -411,7 +411,7 @@ concrete productions top::SqliteOptNatural_c
     top.unparse = "";
   }
 
-nonterminal SqliteOptLeftOrInnerOrCross_c with location, ast<Maybe<abs:SqliteLeftOrInnerOrCross>>, unparse;
+tracked nonterminal SqliteOptLeftOrInnerOrCross_c with location, ast<Maybe<abs:SqliteLeftOrInnerOrCross>>, unparse;
 concrete productions top::SqliteOptLeftOrInnerOrCross_c
 | SqliteLeft_t o::SqliteOptOuter_c
   {
@@ -434,7 +434,7 @@ concrete productions top::SqliteOptLeftOrInnerOrCross_c
     top.unparse = "";
   }
 
-nonterminal SqliteOptOuter_c with location, ast<Boolean>, unparse;
+tracked nonterminal SqliteOptOuter_c with location, ast<Boolean>, unparse;
 concrete productions top::SqliteOptOuter_c
 | SqliteOuter_t
   {
@@ -447,7 +447,7 @@ concrete productions top::SqliteOptOuter_c
     top.unparse = "";
   }
 
-nonterminal SqliteJoinConstraint_c with location, ast<Maybe<abs:SqliteJoinConstraint>>, unparse;
+tracked nonterminal SqliteJoinConstraint_c with location, ast<Maybe<abs:SqliteJoinConstraint>>, unparse;
 concrete productions top::SqliteJoinConstraint_c
 | SqliteOnConstraint_t e::SqliteExpr_c
   {
@@ -465,7 +465,7 @@ concrete productions top::SqliteJoinConstraint_c
     top.unparse = "";
   }
 
-nonterminal SqliteOptWhere_c with location, ast<Maybe<abs:SqliteWhere>>, unparse;
+tracked nonterminal SqliteOptWhere_c with location, ast<Maybe<abs:SqliteWhere>>, unparse;
 concrete productions top::SqliteOptWhere_c
 | w::SqliteWhere_c
   {
@@ -478,7 +478,7 @@ concrete productions top::SqliteOptWhere_c
     top.unparse = "";
   }
 
-nonterminal SqliteWhere_c with location, ast<abs:SqliteWhere>, unparse;
+tracked nonterminal SqliteWhere_c with location, ast<abs:SqliteWhere>, unparse;
 concrete productions top::SqliteWhere_c
 | SqliteWhere_t e::SqliteExpr_c
   {
@@ -486,7 +486,7 @@ concrete productions top::SqliteWhere_c
     top.unparse = " WHERE " ++ e.unparse;
   }
 
-nonterminal SqliteOptGroup_c with location, ast<Maybe<abs:SqliteGroup>>, unparse;
+tracked nonterminal SqliteOptGroup_c with location, ast<Maybe<abs:SqliteGroup>>, unparse;
 concrete productions top::SqliteOptGroup_c
 | g::SqliteGroup_c
   {
@@ -499,7 +499,7 @@ concrete productions top::SqliteOptGroup_c
     top.unparse = "";
   }
 
-nonterminal SqliteGroup_c with location, ast<abs:SqliteGroup>, unparse;
+tracked nonterminal SqliteGroup_c with location, ast<abs:SqliteGroup>, unparse;
 concrete productions top::SqliteGroup_c
 | SqliteGroup_t SqliteBy_t es::SqliteExprList_c h::SqliteOptHaving_c
   {
@@ -507,7 +507,7 @@ concrete productions top::SqliteGroup_c
     top.unparse = "GROUP BY " ++ es.unparse ++ h.unparse;
   }
 
-nonterminal SqliteOptHaving_c with location, ast<Maybe<abs:SqliteHaving>>, unparse;
+tracked nonterminal SqliteOptHaving_c with location, ast<Maybe<abs:SqliteHaving>>, unparse;
 concrete productions top::SqliteOptHaving_c
 | h::SqliteHaving_c
   {
@@ -520,7 +520,7 @@ concrete productions top::SqliteOptHaving_c
     top.unparse = "";
   }
 
-nonterminal SqliteHaving_c with location, ast<abs:SqliteHaving>, unparse;
+tracked nonterminal SqliteHaving_c with location, ast<abs:SqliteHaving>, unparse;
 concrete productions top::SqliteHaving_c
 | SqliteHaving_t e::SqliteExpr_c
   {
@@ -528,7 +528,7 @@ concrete productions top::SqliteHaving_c
     top.unparse = " HAVING " ++ e.unparse;
   }
 
-nonterminal SqliteValues_c with location, ast<abs:SqliteValues>, unparse;
+tracked nonterminal SqliteValues_c with location, ast<abs:SqliteValues>, unparse;
 concrete productions top::SqliteValues_c
 | SqliteValues_t es::SqliteExprListList_c
   {
@@ -536,7 +536,7 @@ concrete productions top::SqliteValues_c
     top.unparse = " VALUES " ++ es.unparse;
   }
 
-nonterminal SqliteExprListList_c with location, ast<abs:SqliteExprListList>, unparse;
+tracked nonterminal SqliteExprListList_c with location, ast<abs:SqliteExprListList>, unparse;
 concrete productions top::SqliteExprListList_c
 | es::SqliteExprListList_c ',' '(' e::SqliteExprList_c ')'
   {
@@ -549,7 +549,7 @@ concrete productions top::SqliteExprListList_c
     top.unparse = "(" ++ e.unparse ++ ")";
   }
 
-nonterminal SqliteExprList_c with location, ast<abs:SqliteExprList>, unparse;
+tracked nonterminal SqliteExprList_c with location, ast<abs:SqliteExprList>, unparse;
 concrete productions top::SqliteExprList_c
 | es::SqliteExprList_c ',' e::SqliteExpr_c
   {
@@ -563,7 +563,7 @@ concrete productions top::SqliteExprList_c
   }
 
 -- TODO: fully implement expressions
-nonterminal SqliteExpr_c with location, ast<abs:SqliteExpr>, unparse;
+tracked nonterminal SqliteExpr_c with location, ast<abs:SqliteExpr>, unparse;
 concrete productions top::SqliteExpr_c
 | l::SqliteLiteralValue_c
   {
@@ -780,7 +780,7 @@ concrete productions top::SqliteExpr_c
     top.unparse = "?";
   }
 
-nonterminal SqliteSchemaTableColumnName_c with location, ast<abs:SqliteSchemaTableColumnName>, unparse;
+tracked nonterminal SqliteSchemaTableColumnName_c with location, ast<abs:SqliteSchemaTableColumnName>, unparse;
 concrete productions top::SqliteSchemaTableColumnName_c
 | schemaName::SqliteIdentifier_t '.' tableName::SqliteIdentifier_t '.' columnName::SqliteIdentifier_t
   {
@@ -798,7 +798,7 @@ concrete productions top::SqliteSchemaTableColumnName_c
     top.unparse = columnName.lexeme;
   }
 
-nonterminal SqliteLiteralValue_c with location, unparse;
+tracked nonterminal SqliteLiteralValue_c with location, unparse;
 concrete productions top::SqliteLiteralValue_c
 | l::SqliteNumericLiteral_c
   {
@@ -829,7 +829,7 @@ concrete productions top::SqliteLiteralValue_c
     top.unparse = "CURRENT_TIMESTAMP";
   }
 
-nonterminal SqliteNumericLiteral_c with location, unparse;
+tracked nonterminal SqliteNumericLiteral_c with location, unparse;
 concrete productions top::SqliteNumericLiteral_c
 | l::SqliteDecimalLiteral_t
   {
@@ -840,7 +840,7 @@ concrete productions top::SqliteNumericLiteral_c
     top.unparse = l.lexeme;
   }
 
-nonterminal SqliteOptFunctionArgs_c with location, ast<Maybe<abs:SqliteFunctionArgs>>, unparse;
+tracked nonterminal SqliteOptFunctionArgs_c with location, ast<Maybe<abs:SqliteFunctionArgs>>, unparse;
 concrete productions top::SqliteOptFunctionArgs_c
 | d::SqliteOptDistinct_c es::SqliteExprList_c
   {
@@ -858,7 +858,7 @@ concrete productions top::SqliteOptFunctionArgs_c
     top.unparse = "";
   }
 
-nonterminal SqliteOptDistinct_c with location, ast<Boolean>, unparse;
+tracked nonterminal SqliteOptDistinct_c with location, ast<Boolean>, unparse;
 concrete productions top::SqliteOptDistinct_c
 | SqliteDistinct_t
   {
@@ -871,7 +871,7 @@ concrete productions top::SqliteOptDistinct_c
     top.unparse = "";
   }
 
-nonterminal SqliteOptColumnNameList_c with location, ast<Maybe<abs:SqliteColumnNameList>>, unparse;
+tracked nonterminal SqliteOptColumnNameList_c with location, ast<Maybe<abs:SqliteColumnNameList>>, unparse;
 concrete productions top::SqliteOptColumnNameList_c
 | '(' cs::SqliteColumnNameList_c ')'
   {
@@ -884,7 +884,7 @@ concrete productions top::SqliteOptColumnNameList_c
     top.unparse = "";
   }
 
-nonterminal SqliteColumnNameList_c with location, ast<abs:SqliteColumnNameList>, unparse;
+tracked nonterminal SqliteColumnNameList_c with location, ast<abs:SqliteColumnNameList>, unparse;
 concrete productions top::SqliteColumnNameList_c
 | cs::SqliteColumnNameList_c ',' c::SqliteIdentifier_t
   {
@@ -897,7 +897,7 @@ concrete productions top::SqliteColumnNameList_c
     top.unparse = c.lexeme;
   }
 
-nonterminal SqliteOptOrder_c with location, ast<Maybe<abs:SqliteOrder>>, unparse;
+tracked nonterminal SqliteOptOrder_c with location, ast<Maybe<abs:SqliteOrder>>, unparse;
 concrete productions top::SqliteOptOrder_c
 | o::SqliteOrder_c
   {
@@ -910,7 +910,7 @@ concrete productions top::SqliteOptOrder_c
     top.unparse = "";
   }
 
-nonterminal SqliteOrder_c with location, ast<abs:SqliteOrder>, unparse;
+tracked nonterminal SqliteOrder_c with location, ast<abs:SqliteOrder>, unparse;
 concrete productions top::SqliteOrder_c
 | SqliteOrder_t SqliteBy_t os::SqliteOrderingTermList_c
   {
@@ -918,7 +918,7 @@ concrete productions top::SqliteOrder_c
     top.unparse = " ORDER BY " ++ os.unparse;
   }
 
-nonterminal SqliteOrderingTermList_c with location, ast<abs:SqliteOrderingTermList>, unparse;
+tracked nonterminal SqliteOrderingTermList_c with location, ast<abs:SqliteOrderingTermList>, unparse;
 concrete productions top::SqliteOrderingTermList_c
 | os::SqliteOrderingTermList_c ',' o::SqliteOrderingTerm_c
   {
@@ -931,7 +931,7 @@ concrete productions top::SqliteOrderingTermList_c
     top.unparse = o.unparse;
   }
 
-nonterminal SqliteOrderingTerm_c with location, ast<abs:SqliteOrderingTerm>, unparse;
+tracked nonterminal SqliteOrderingTerm_c with location, ast<abs:SqliteOrderingTerm>, unparse;
 concrete productions top::SqliteOrderingTerm_c
 | e::SqliteExpr_c c::SqliteOptCollate_c a::SqliteOptAscOrDesc_c
   {
@@ -939,7 +939,7 @@ concrete productions top::SqliteOrderingTerm_c
     top.unparse = e.unparse ++ c.unparse ++ a.unparse;
   }
 
-nonterminal SqliteOptCollate_c with location, ast<Maybe<abs:SqliteCollate>>, unparse;
+tracked nonterminal SqliteOptCollate_c with location, ast<Maybe<abs:SqliteCollate>>, unparse;
 concrete productions top::SqliteOptCollate_c
 | c::SqliteCollate_c
   {
@@ -952,7 +952,7 @@ concrete productions top::SqliteOptCollate_c
     top.unparse = "";
   }
 
-nonterminal SqliteCollate_c with location, ast<abs:SqliteCollate>, unparse;
+tracked nonterminal SqliteCollate_c with location, ast<abs:SqliteCollate>, unparse;
 concrete productions top::SqliteCollate_c
 | SqliteCollate_t collationName::SqliteIdentifier_t
   {
@@ -960,7 +960,7 @@ concrete productions top::SqliteCollate_c
     top.unparse = " COLLATE " ++ collationName.lexeme;
   }
 
-nonterminal SqliteOptAscOrDesc_c with location, unparse;
+tracked nonterminal SqliteOptAscOrDesc_c with location, unparse;
 concrete productions top::SqliteOptAscOrDesc_c
 | a::SqliteAscOrDesc_c
   {
@@ -971,7 +971,7 @@ concrete productions top::SqliteOptAscOrDesc_c
     top.unparse = "";
   }
 
-nonterminal SqliteAscOrDesc_c with location, unparse;
+tracked nonterminal SqliteAscOrDesc_c with location, unparse;
 concrete productions top::SqliteAscOrDesc_c
 | SqliteAsc_t
   {
@@ -982,7 +982,7 @@ concrete productions top::SqliteAscOrDesc_c
     top.unparse = " DESC";
   }
 
-nonterminal SqliteOptLimit_c with location, ast<Maybe<abs:SqliteLimit>>, unparse;
+tracked nonterminal SqliteOptLimit_c with location, ast<Maybe<abs:SqliteLimit>>, unparse;
 concrete productions top::SqliteOptLimit_c
 | l::SqliteLimit_c
   {
@@ -995,7 +995,7 @@ concrete productions top::SqliteOptLimit_c
     top.unparse = "";
   }
 
-nonterminal SqliteLimit_c with location, ast<abs:SqliteLimit>, unparse;
+tracked nonterminal SqliteLimit_c with location, ast<abs:SqliteLimit>, unparse;
 concrete productions top::SqliteLimit_c
 | SqliteLimit_t e::SqliteExpr_c o::SqliteOptOffsetExpr_c
   {
@@ -1003,7 +1003,7 @@ concrete productions top::SqliteLimit_c
     top.unparse = " LIMIT " ++ e.unparse ++ o.unparse;
   }
 
-nonterminal SqliteOptOffsetExpr_c with location, ast<Maybe<abs:SqliteOffsetExpr>>, unparse;
+tracked nonterminal SqliteOptOffsetExpr_c with location, ast<Maybe<abs:SqliteOffsetExpr>>, unparse;
 concrete productions top::SqliteOptOffsetExpr_c
 | o::SqliteOffsetExpr_c
   {
@@ -1016,7 +1016,7 @@ concrete productions top::SqliteOptOffsetExpr_c
     top.unparse = "";
   }
 
-nonterminal SqliteOffsetExpr_c with location, ast<abs:SqliteOffsetExpr>, unparse;
+tracked nonterminal SqliteOffsetExpr_c with location, ast<abs:SqliteOffsetExpr>, unparse;
 concrete productions top::SqliteOffsetExpr_c
 | o::SqliteOffsetOrComma_c e::SqliteExpr_c
   {
@@ -1024,7 +1024,7 @@ concrete productions top::SqliteOffsetExpr_c
     top.unparse = o.unparse ++ e.unparse;
   }
 
-nonterminal SqliteOffsetOrComma_c with location, unparse;
+tracked nonterminal SqliteOffsetOrComma_c with location, unparse;
 concrete productions top::SqliteOffsetOrComma_c
 | SqliteOffset_t
   {
@@ -1035,7 +1035,7 @@ concrete productions top::SqliteOffsetOrComma_c
     top.unparse = ", ";
   }
 
-nonterminal SqliteInsertStmt_c with location, ast<abs:SqliteInsertStmt>, unparse;
+tracked nonterminal SqliteInsertStmt_c with location, ast<abs:SqliteInsertStmt>, unparse;
 concrete productions top::SqliteInsertStmt_c
 | w::SqliteOptWith_c i::SqliteInsertOrReplace_c SqliteInto_t
     s::SqliteSchemaTableName_c cs::SqliteOptColumnNameList_c
@@ -1045,7 +1045,7 @@ concrete productions top::SqliteInsertStmt_c
     top.unparse = w.unparse ++ i.unparse ++ " INTO " ++ s.unparse ++ cs.unparse ++ v.unparse;
   }
 
-nonterminal SqliteInsertOrReplace_c with location, unparse;
+tracked nonterminal SqliteInsertOrReplace_c with location, unparse;
 concrete productions top::SqliteInsertOrReplace_c
 | SqliteInsert_t
   {
@@ -1076,7 +1076,7 @@ concrete productions top::SqliteInsertOrReplace_c
     top.unparse = "INSERT OR IGNORE";
   }
 
-nonterminal SqliteSchemaTableName_c with location, ast<abs:SqliteSchemaTableName>, unparse;
+tracked nonterminal SqliteSchemaTableName_c with location, ast<abs:SqliteSchemaTableName>, unparse;
 concrete productions top::SqliteSchemaTableName_c
 | schemaName::SqliteIdentifier_t '.' tableName::SqliteIdentifier_t
   {
@@ -1089,7 +1089,7 @@ concrete productions top::SqliteSchemaTableName_c
     top.unparse = tableName.lexeme;
   }
 
-nonterminal SqliteValuesOrSelectOrDefault_c with location, ast<abs:SqliteValues>, unparse;
+tracked nonterminal SqliteValuesOrSelectOrDefault_c with location, ast<abs:SqliteValues>, unparse;
 concrete productions top::SqliteValuesOrSelectOrDefault_c
 -- This is ambiguous because SqliteSelectStmt_c can just be SqliteValues_c?
 --| v::SqliteValues_c
@@ -1108,7 +1108,7 @@ concrete productions top::SqliteValuesOrSelectOrDefault_c
     top.unparse = " DEFAULT VALUES";
   }
 
-nonterminal SqliteDeleteStmt_c with location, ast<abs:SqliteDeleteStmt>, unparse;
+tracked nonterminal SqliteDeleteStmt_c with location, ast<abs:SqliteDeleteStmt>, unparse;
 concrete productions top::SqliteDeleteStmt_c
 | w::SqliteOptWith_c SqliteDelete_t SqliteFrom_t t::SqliteQualifiedTableName_c
     wh::SqliteOptWhere_c
@@ -1117,7 +1117,7 @@ concrete productions top::SqliteDeleteStmt_c
     top.unparse = w.unparse ++ "DELETE FROM " ++ t.unparse ++ wh.unparse;
   }
 
-nonterminal SqliteQualifiedTableName_c with location, ast<abs:SqliteSchemaTableName>, unparse;
+tracked nonterminal SqliteQualifiedTableName_c with location, ast<abs:SqliteSchemaTableName>, unparse;
 concrete productions top::SqliteQualifiedTableName_c
 | s::SqliteSchemaTableName_c i::SqliteOptIndexed_c
   {
@@ -1125,7 +1125,7 @@ concrete productions top::SqliteQualifiedTableName_c
     top.unparse = s.unparse ++ i.unparse;
   }
 
-nonterminal SqliteOptIndexed_c with location, unparse;
+tracked nonterminal SqliteOptIndexed_c with location, unparse;
 concrete productions top::SqliteOptIndexed_c
 | SqliteIndexed_t SqliteBy_t indexName::SqliteIdentifier_t
   {

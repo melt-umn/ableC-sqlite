@@ -14,7 +14,7 @@ top::BaseTypeExpr ::= tables::[tbls:SqliteTable]
   forwards to
     typedefTypeExpr(
       nilQualifier(),
-      name("_sqlite_db", location=abs:builtin)
+      name("_sqlite_db")
     );
 }
 
@@ -49,7 +49,7 @@ top::BaseTypeExpr ::= columns::[abs:SqliteColumn]
   forwards to
     typedefTypeExpr(
       nilQualifier(),
-      name("_sqlite_query", location=abs:builtin)
+      name("_sqlite_query")
     );
 }
 
