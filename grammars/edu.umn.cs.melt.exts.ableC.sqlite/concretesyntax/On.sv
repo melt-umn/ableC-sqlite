@@ -24,7 +24,7 @@ top::host_cnc:Expr_c ::= 'on' c::CommitBit_c
   top.ast = c.ast;
 }
 
-tracked nonterminal QueryBit_c with ast<host_abs:Stmt>, location ;
+tracked nonterminal QueryBit_c with ast<host_abs:Stmt> ;
 
 concrete production sqliteQueryBitStmt_c
 top::QueryBit_c ::= '(' db::host_cnc:Expr_c ')' 'query' query::SqliteQueryBlock_c
@@ -42,7 +42,7 @@ top::QueryBit_c ::= id::host_cnc:Identifier_t 'query' query::SqliteQueryBlock_c
 	      query.ast, host_abs:fromId(queryName));
 }
 
-tracked nonterminal CommitBit_c with ast<host_abs:Expr>, location ;
+tracked nonterminal CommitBit_c with ast<host_abs:Expr> ;
 
 concrete production sqliteCommitBitExpr_c
 top::CommitBit_c ::= '(' db::host_cnc:Expr_c ')' 'commit' query::SqliteQueryBlock_c
