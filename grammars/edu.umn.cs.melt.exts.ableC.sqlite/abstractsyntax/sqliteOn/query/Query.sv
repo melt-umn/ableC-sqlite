@@ -758,7 +758,7 @@ Message ::= col::SqliteResultColumnName
                          end
         end
     -- FIXME: get the real * location
-    | sqliteResultColumnNameStar()               -> name("*", location=builtIn())
+    | sqliteResultColumnNameStar()               -> name("*", location=abs:builtin)
     | sqliteResultColumnNameTableStar(tableName) -> name("*", location=tableName.location)
     end;
   local mTableName :: Maybe<Name> =

@@ -14,7 +14,7 @@ top::BaseTypeExpr ::= tables::[tbls:SqliteTable]
   forwards to
     typedefTypeExpr(
       nilQualifier(),
-      name("_sqlite_db", location=builtIn())
+      name("_sqlite_db", location=abs:builtin)
     );
 }
 
@@ -49,7 +49,7 @@ top::BaseTypeExpr ::= columns::[abs:SqliteColumn]
   forwards to
     typedefTypeExpr(
       nilQualifier(),
-      name("_sqlite_query", location=builtIn())
+      name("_sqlite_query", location=abs:builtin)
     );
 }
 
@@ -75,12 +75,3 @@ top::Type ::= qs::Qualifiers columns::[abs:SqliteColumn]
       )
     );
 }
-
--- TODO: don't duplicate this
--- New location for expressions which don't have real locations
-abstract production builtIn
-top::Location ::=
-{
-  forwards to loc("Built In", 0, 0, 0, 0, 0, 0);
-}
-

@@ -19,6 +19,7 @@ top::Stmt ::= row::Name query::Expr body::Stmt
   body.env = addEnv(rowDecl.defs, top.env);
   body.controlStmtContext = controlEnterLoop(top.controlStmtContext);
   query.env = top.env;
+  query.controlStmtContext = top.controlStmtContext;
 
   local localErrors :: [Message] =
     case query.typerep of
@@ -47,30 +48,30 @@ top::Stmt ::= row::Name query::Expr body::Stmt
   -- sqlite3_reset(${query}.query)
   local callReset :: Expr =
     directCallExpr(
-      name("sqlite3_reset", location=builtIn()),
-      foldExpr([memberExpr(query, true, name("query", location=builtIn()), location=builtIn())]),
-      location=builtIn()
+      name("sqlite3_reset", location=abs:builtin),
+      foldExpr([memberExpr(query, true, name("query", location=abs:builtin), location=abs:builtin)]),
+      location=abs:builtin
     );
 
   -- sqlite3_step(${query}.query)
   local callStep :: Expr =
     directCallExpr(
-      name("sqlite3_step", location=builtIn()),
-      foldExpr([memberExpr(query, true, name("query", location=builtIn()), location=builtIn())]),
-      location=builtIn()
+      name("sqlite3_step", location=abs:builtin),
+      foldExpr([memberExpr(query, true, name("query", location=abs:builtin), location=abs:builtin)]),
+      location=abs:builtin
     );
 
   -- SQLITE_ROW
   local sqliteRow :: Expr =
     -- TODO: don't hardcode value
-    mkIntConst(100, builtIn());
+    mkIntConst(100, abs:builtin);
 --    declRefExpr(
---      name("SQLITE_ROW", location=builtIn()),
---      location=builtIn()
+--      name("SQLITE_ROW", location=abs:builtin),
+--      location=abs:builtin
 --    );
 
   -- sqlite3_step(${query}.query) == SQLITE_ROW
-  local hasRow :: Expr = equalsExpr(callStep, sqliteRow, location=builtIn());
+  local hasRow :: Expr = equalsExpr(callStep, sqliteRow, location=abs:builtin);
 
   -- for example: const unsigned char *name; int age;
   local columnDecls :: StructItemList = makeColumnDecls(columns);
@@ -83,7 +84,7 @@ top::Stmt ::= row::Name query::Expr body::Stmt
         nilAttribute(),
         nothingName(),
         columnDecls,
-        location=builtIn()
+        location=abs:builtin
       )
     );
 
@@ -95,9 +96,9 @@ top::Stmt ::= row::Name query::Expr body::Stmt
     objectInitializer(
       makeRowInit(
         columns,
-        memberExpr(query, true, name("query", location=builtIn()), location=builtIn())
+        memberExpr(query, true, name("query", location=abs:builtin), location=abs:builtin)
       ),
-      location=builtIn()
+      location=abs:builtin
     );
   -- struct { <column declarations> } ${row} = { <column initializations> } ;
   local rowDecl :: Stmt =
@@ -135,14 +136,6 @@ top::Stmt ::= row::Name query::Expr body::Stmt
     ]);
 
   forwards to fullStmt;
-}
-
--- TODO: don't duplicate this
--- New location for expressions which don't have real locations
-abstract production builtIn
-top::Location ::=
-{
-  forwards to loc("Built In", 0, 0, 0, 0, 0, 0);
 }
 
 function makeColumnDecls
@@ -215,14 +208,14 @@ Init ::= col::SqliteColumn query::Expr colIndex::Integer
     positionalInit(
       exprInitializer(
         directCallExpr(
-          name(f, location=builtIn()),
+          name(f, location=abs:builtin),
           foldExpr([
             query,
-            mkIntConst(colIndex, builtIn())
+            mkIntConst(colIndex, abs:builtin)
           ]),
-          location=builtIn()
+          location=abs:builtin
         ),
-        location=builtIn()
+        location=abs:builtin
       )
     );
 }
