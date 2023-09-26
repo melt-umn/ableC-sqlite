@@ -122,12 +122,11 @@ top::Stmt ::= db::Expr query::SqliteQuery queryName::Name
       location=abs:builtin
     );
 
-  forwards to
-    foldStmt([
-      queryDecl,
+  forwards to seqStmt(
+    queryDecl,
+    seqStmt(
       exprStmt(mkErrorCheck(localErrors, callPrepare)),
-      makeBinds(query, queryName)
-    ]);
+      makeBinds(query, queryName)));
 }
 
 abstract production sqliteCommitDb
