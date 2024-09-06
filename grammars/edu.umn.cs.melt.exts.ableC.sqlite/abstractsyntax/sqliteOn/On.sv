@@ -90,10 +90,10 @@ top::Stmt ::= db::Expr query::SqliteQuery queryName::Name
         abs:sqliteQueryTypeExpr(resultColumns),
         foldDeclarator([
           declarator(
-            queryName,
+            ^queryName,
             baseTypeExpr(),
             nilAttribute(),
-            justInitializer(exprInitializer(callNew))
+            justInitializer(exprInitializer(^callNew))
           )
         ])
       )
@@ -104,12 +104,12 @@ top::Stmt ::= db::Expr query::SqliteQuery queryName::Name
     directCallExpr(
       name("sqlite3_prepare_v2"),
       foldExpr([
-        memberExpr(db, true, name("db")),
+        memberExpr(^db, true, name("db")),
         stringLiteral(quote(query.queryStr)),
         mkIntConst(length(query.queryStr)+1),
         addressOfExpr(
           memberExpr(
-            declRefExpr(queryName),
+            declRefExpr(^queryName),
             true,
             name("query")
           )
@@ -119,10 +119,10 @@ top::Stmt ::= db::Expr query::SqliteQuery queryName::Name
     );
 
   forwards to seqStmt(
-    queryDecl,
+    @queryDecl,
     seqStmt(
-      exprStmt(mkErrorCheck(localErrors, callPrepare)),
-      makeBinds(query, queryName)));
+      exprStmt(mkErrorCheck(localErrors, @callPrepare)),
+      makeBinds(@query, @queryName)));
 }
 
 abstract production sqliteCommitDb
@@ -134,7 +134,7 @@ top::Expr ::= db::Expr query::SqliteQuery
   local stepStmt :: Stmt =
     foreach:sqliteForeach(
       name("_insert_step"),
-      declRefExpr(queryName),
+      declRefExpr(^queryName),
       nullStmt()
     );
 
@@ -142,24 +142,24 @@ top::Expr ::= db::Expr query::SqliteQuery
     directCallExpr(
       name("finalize"),
       foldExpr([
-        declRefExpr(queryName)
+        declRefExpr(^queryName)
       ])
     );
 
   forwards to
     stmtExpr(
-      foldStmt([
-        sqliteQueryDb(db, query, queryName),
-        stepStmt
-      ]),
-      callFinalize
+      seqStmt(
+        sqliteQueryDb(@db, @query, @queryName),
+        @stepStmt
+      ),
+      @callFinalize
     );
 }
 
 abstract production makeBinds
 top::Stmt ::= query::SqliteQuery queryName::Name
 {
-  forwards to makeBindsHelper(query.exprParams, queryName, 1);
+  forwards to makeBindsHelper(query.exprParams, @queryName, 1);
 }
 
 abstract production makeBindsHelper
@@ -176,9 +176,9 @@ top::Stmt ::= exprParams::[Expr] queryName::Name i::Integer
     then nullStmt()
     else seqStmt(
            exprStmt(
-             makeBind(head(exprParams), queryName, i)
+             makeBind(head(exprParams), @queryName, i)
            ),
-           makeBindsHelper(tail(exprParams), queryName, i+1)
+           makeBindsHelper(tail(exprParams), @queryName, i+1)
          );
 }
 
@@ -190,8 +190,8 @@ top::Expr ::= exprParam::Expr queryName::Name i::Integer
 
   forwards to
     if isTextType(exprParam.typerep)
-    then makeBindText(exprParam, queryName, i)
-    else makeBindInt(exprParam, queryName, i);
+    then makeBindText(@exprParam, @queryName, i)
+    else makeBindInt(@exprParam, @queryName, i);
 }
 
 function isTextType
@@ -224,12 +224,12 @@ top::Expr ::= exprParam::Expr queryName::Name i::Integer
       name("sqlite3_bind_text"),
       foldExpr([
         memberExpr(
-          declRefExpr(queryName),
+          declRefExpr(^queryName),
           true,
           name("query")
         ),
         mkIntConst(i),
-        exprParam,
+        ^exprParam,
         mkIntConst(-1),
         mkIntConst(0)
       ])
@@ -244,12 +244,12 @@ top::Expr ::= exprParam::Expr queryName::Name i::Integer
       name("sqlite3_bind_int"),
       foldExpr([
         memberExpr(
-          declRefExpr(queryName),
+          declRefExpr(^queryName),
           true,
           name("query")
         ),
         mkIntConst(i),
-        exprParam
+        ^exprParam
       ])
     );
 }

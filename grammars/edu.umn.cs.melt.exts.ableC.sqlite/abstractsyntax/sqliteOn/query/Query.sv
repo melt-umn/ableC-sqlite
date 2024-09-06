@@ -111,7 +111,7 @@ tracked nonterminal SqliteCommonTableExpr with usedTables, usedColumns, exprPara
 abstract production sqliteCommonTableExpr
 top::SqliteCommonTableExpr ::= tableName::Name s::SqliteSelectStmt mcs::Maybe<SqliteColumnNameList>
 {
-  top.usedTables = cons(tableName, s.usedTables);
+  top.usedTables = cons(^tableName, s.usedTables);
   top.usedColumns =
     case mcs of
       just(cs) -> s.usedColumns ++ cs.usedColumns
@@ -225,7 +225,7 @@ top::SqliteResultColumn ::= e::SqliteExpr mc::Maybe<SqliteAsColumnAlias>
         case n.colName of
           sqliteResultColumnName(_, _, mTableName)   -> mTableName
         | sqliteResultColumnNameStar()               -> nothing()
-        | sqliteResultColumnNameTableStar(tableName) -> just(tableName)
+        | sqliteResultColumnNameTableStar(tableName) -> just(^tableName)
         end
     | _                                  -> nothing()
     end;
@@ -246,9 +246,9 @@ top::SqliteResultColumn ::=
 abstract production sqliteResultColumnTableStar
 top::SqliteResultColumn ::= tableName::Name
 {
-  top.usedTables = [tableName];
+  top.usedTables = [^tableName];
   top.usedColumns = [];
-  top.resultColumn = sqliteResultColumnNameTableStar(tableName);
+  top.resultColumn = sqliteResultColumnNameTableStar(^tableName);
   top.exprParams = [];
 }
 
@@ -257,7 +257,7 @@ synthesized attribute columnAlias :: Name;
 abstract production sqliteAsColumnAlias
 top::SqliteAsColumnAlias ::= columnAlias::Name
 {
-  top.columnAlias = columnAlias;
+  top.columnAlias = ^columnAlias;
 }
 
 tracked nonterminal SqliteFrom with usedTables, usedColumns, exprParams;
@@ -296,7 +296,7 @@ synthesized attribute table :: Name;
 abstract production sqliteTableOrSubquery
 top::SqliteTableOrSubquery ::= tableName::Name
 {
-  top.table = tableName;
+  top.table = ^tableName;
 }
 
 tracked nonterminal SqliteJoinList with usedTables, usedColumns, exprParams;
@@ -480,7 +480,7 @@ top::SqliteExpr ::= n::SqliteSchemaTableColumnName
       sqliteResultColumnName(_, _, mTableName) ->
         case mTableName of just(t) -> [t] | nothing() -> [] end
     | sqliteResultColumnNameStar() -> []
-    | sqliteResultColumnNameTableStar(tableName) -> [tableName]
+    | sqliteResultColumnNameTableStar(tableName) -> [^tableName]
     end;
   top.usedColumns = [n.colName];
   top.exprParams = [];
@@ -511,7 +511,7 @@ top::SqliteExpr ::= e::Expr
 {
   top.usedTables = [];
   top.usedColumns = [];
-  top.exprParams = [e];
+  top.exprParams = [^e];
 }
 
 tracked nonterminal SqliteSchemaTableColumnName with colName;
@@ -519,17 +519,17 @@ synthesized attribute colName :: SqliteResultColumnName;
 abstract production sqliteSchemaTableColumnName
 top::SqliteSchemaTableColumnName ::= schemaName::Name tableName::Name colName::Name
 {
-  top.colName = sqliteResultColumnName(just(colName), nothing(), just(tableName));
+  top.colName = sqliteResultColumnName(just(^colName), nothing(), just(^tableName));
 }
 abstract production sqliteTableColumnName
 top::SqliteSchemaTableColumnName ::= tableName::Name colName::Name
 {
-  top.colName = sqliteResultColumnName(just(colName), nothing(), just(tableName));
+  top.colName = sqliteResultColumnName(just(^colName), nothing(), just(^tableName));
 }
 abstract production sqliteSColumnName
 top::SqliteSchemaTableColumnName ::= colName::Name
 {
-  top.colName = sqliteResultColumnName(just(colName), nothing(), nothing());
+  top.colName = sqliteResultColumnName(just(^colName), nothing(), nothing());
 }
 
 tracked nonterminal SqliteFunctionArgs with usedTables, usedColumns, exprParams;
@@ -554,7 +554,7 @@ top::SqliteColumnNameList ::= c::Name cs::SqliteColumnNameList
 {
   top.usedColumns =
     cons(
-      sqliteResultColumnName(just(c), nothing(), nothing()),
+      sqliteResultColumnName(just(^c), nothing(), nothing()),
       cs.usedColumns
     );
 }
@@ -661,14 +661,14 @@ synthesized attribute tName :: Name;
 abstract production sqliteSchemaTableName
 top::SqliteSchemaTableName ::= schemaName::Name tableName::Name
 {
-  top.mSchemaName = just(schemaName);
-  top.tName = tableName;
+  top.mSchemaName = just(^schemaName);
+  top.tName = ^tableName;
 }
 abstract production sqliteTableName
 top::SqliteSchemaTableName ::= tableName::Name
 {
   top.mSchemaName = nothing();
-  top.tName = tableName;
+  top.tName = ^tableName;
 }
 
 tracked nonterminal SqliteDeleteStmt with usedTables, usedColumns, selectedTables, exprParams;
@@ -699,7 +699,7 @@ function checkTablesExist
 {
   local foundTable :: Name = head(foundTables);
   local localErrors :: [Message] =
-    if tableExistsIn(expectedTables, foundTable) then []
+    if tableExistsIn(expectedTables, ^foundTable) then []
     else [errFromOrigin(foundTable, "no such table: " ++ foundTable.name)];
 
   return if null(foundTables) then []
@@ -710,7 +710,7 @@ function tableExistsIn
 Boolean ::= tables::[SqliteTable] table::Name
 {
   return if null(tables) then false
-         else (head(tables).tableName.name == table.name) || tableExistsIn(tail(tables), table);
+         else (head(tables).tableName.name == table.name) || tableExistsIn(tail(tables), ^table);
 }
 
 function filterSelectedTables
@@ -722,8 +722,8 @@ function filterSelectedTables
 
   return if null(tables)
          then []
-         else if containsTableName(table, selectedTables)
-              then cons(table, rest)
+         else if containsTableName(^table, selectedTables)
+              then cons(^table, rest)
               else rest;
 }
 
@@ -731,7 +731,7 @@ function containsTableName
 Boolean ::= t::SqliteTable names::[Name]
 {
   return !null(names) &&
-    (t.tableName.name == head(names).name || containsTableName(t, tail(names)));
+    (t.tableName.name == head(names).name || containsTableName(^t, tail(names)));
 }
 
 -- TODO: also check if columns are ambiguous
@@ -764,12 +764,12 @@ Message ::= col::SqliteResultColumnName
     case col of
       sqliteResultColumnName(_, _, mTableName)   -> mTableName
     | sqliteResultColumnNameStar()               -> nothing()
-    | sqliteResultColumnNameTableStar(tableName) -> just(tableName)
+    | sqliteResultColumnNameTableStar(tableName) -> just(^tableName)
     end;
   local fullName :: Name =
     case mTableName of
       just(tableName) -> attachNote logicalLocationFromOrigin(tableName) on name(tableName.name ++ "." ++ colName.name) end
-    | nothing()       -> colName
+    | nothing()       -> @colName
     end;
   return errFromOrigin(fullName, "no such column: " ++ fullName.name);
 }
@@ -783,9 +783,9 @@ function filterUnknownColumns
 
   return if null(usedColumns)
          then []
-         else if tablesContainColumn(tables, col)
+         else if tablesContainColumn(tables, ^col)
               then rest
-              else cons(col, rest);
+              else cons(^col, rest);
 }
 
 function tablesContainColumn
@@ -796,7 +796,7 @@ Boolean ::= tables::[SqliteTable] col::SqliteResultColumnName
     case col of
       sqliteResultColumnName(_, _, mTableName)   -> mTableName
     | sqliteResultColumnNameStar()               -> nothing()
-    | sqliteResultColumnNameTableStar(tableName) -> just(tableName)
+    | sqliteResultColumnNameTableStar(tableName) -> just(^tableName)
     end;
   local doCheckNextTable :: Boolean =
     case mTableName of
@@ -804,8 +804,8 @@ Boolean ::= tables::[SqliteTable] col::SqliteResultColumnName
     | nothing()       -> true
     end;
   return !null(tables) &&
-    ((doCheckNextTable && containsColumn(head(tables).columns, col))
-      || tablesContainColumn(tail(tables), col));
+    ((doCheckNextTable && containsColumn(head(tables).columns, ^col))
+      || tablesContainColumn(tail(tables), ^col));
 }
 
 function containsColumn
@@ -822,7 +822,7 @@ Boolean ::= columns::[SqliteColumn] col::SqliteResultColumnName
     | sqliteResultColumnNameTableStar(_)       -> true
     end;
   return !null(columns) &&
-    (nameMatches || containsColumn(tail(columns), col));
+    (nameMatches || containsColumn(tail(columns), ^col));
 }
 
 function makeResultColumns
@@ -843,11 +843,11 @@ function expandColumnStars
     else
       case nextColumnName of
         sqliteResultColumnName(_, _, _)            ->
-          cons(nextColumnName, rest)
+          cons(^nextColumnName, rest)
       | sqliteResultColumnNameStar()               ->
           expandColumnStar(tables, nothing()) ++ rest
       | sqliteResultColumnNameTableStar(tableName) ->
-          expandColumnStar(tables, just(tableName)) ++ rest
+          expandColumnStar(tables, just(^tableName)) ++ rest
       end;
 }
 
@@ -878,9 +878,9 @@ function extractColumnNames
     else
       cons(
         sqliteResultColumnName(
-          just(head(columns).columnName), nothing(), just(tableName)
+          just(head(columns).columnName), nothing(), just(^tableName)
         ),
-        extractColumnNames(tail(columns), tableName)
+        extractColumnNames(tail(columns), ^tableName)
       );
 }
 
@@ -931,11 +931,11 @@ Maybe<SqliteColumn> ::= columnName::SqliteResultColumnName tables::[SqliteTable]
     end;
 
   local foundType :: Maybe<SqliteColumnType> =
-    lookupColumnTypeInTables(n, tables, mTableName);
+    lookupColumnTypeInTables(^n, tables, mTableName);
 
   return
     case foundType of
-      just(t)   -> just(sqliteColumn(a, t))
+      just(t)   -> just(sqliteColumn(^a, t))
     | nothing() -> nothing()
     end;
 }
@@ -950,12 +950,12 @@ Maybe<SqliteColumnType> ::= n::Name tables::[SqliteTable] mTableName::Maybe<Name
     | nothing()       -> true
     end;
   local rest :: Maybe<SqliteColumnType> =
-    lookupColumnTypeInTables(n, tail(tables), mTableName);
+    lookupColumnTypeInTables(^n, tail(tables), mTableName);
 
   return
     if null(tables) then nothing()
     else if doLookupNextTable
-         then case lookupColumnTypeInColumns(n, head(tables).columns) of
+         then case lookupColumnTypeInColumns(^n, head(tables).columns) of
                 just(t)   -> just(t)
               | nothing() -> rest
               end
@@ -971,6 +971,6 @@ Maybe<SqliteColumnType> ::= n::Name columns::[SqliteColumn]
     if null(columns) then nothing()
     else if n.name == nextColumn.columnName.name
          then just(nextColumn.typ)
-         else lookupColumnTypeInColumns(n, tail(columns));
+         else lookupColumnTypeInColumns(^n, tail(columns));
 }
 

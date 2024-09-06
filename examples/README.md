@@ -75,7 +75,7 @@ echo "
 
 ## syntax_error.xc
 
-[syntax_error.xc](syntax_error.xc) illustrates how the benefits of the sqlite ableC extension extend beyond providing convenient syntax; errors that, without this extension, would not have appeared until run-time are now able to be caught earlier, at compile-time.
+[syntax_error.xc](../tests/translate_error/syntax_error.xc) illustrates how the benefits of the sqlite ableC extension extend beyond providing convenient syntax; errors that, without this extension, would not have appeared until run-time are now able to be caught earlier, at compile-time.
 
 ```c
   // this is a compile-time error
@@ -89,7 +89,7 @@ echo "
 
 ## semantic_errors.xc
 
-[semantic_errors.xc](semantic_errors.xc) further illustrates the compile-time error checking that is done by the extension. Even if an SQL query is syntactically valid, various errors can occur and be detected at compile-time.
+[semantic_errors.xc](../tests/translate_error/semantic_errors.xc) further illustrates the compile-time error checking that is done by the extension. Even if an SQL query is syntactically valid, various errors can occur and be detected at compile-time.
 
 ```
   // table `foo' does not exist
@@ -113,10 +113,10 @@ echo "
 
 ## foreach_error.xc
 
-[foreach_error.xc](foreach_error.xc) is another example of compile-time error checking.
+[foreach_error.xc](../tests/translate_error/foreach_error.xc) is another example of compile-time error checking.
 
 ## beware_bugs.xc
 
-[beware_bugs.xc](beware_bugs.xc) contains examples of bugs in this extension.
+[beware_bugs.xc](../tests/translate_error/beware_bugs.xc) contains examples of bugs in this extension.
 
 

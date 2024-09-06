@@ -13,9 +13,10 @@ top::Stmt ::= dbFilename::Expr dbName::Name tableList::SqliteTableList
   local callNew :: Expr =
     directCallExpr(
       name("_new_sqlite_db"),
-      foldExpr([
-        dbFilename
-      ])
+      consExpr(
+        @dbFilename,
+        nilExpr()
+      )
     );
 
   -- _sqlite_db ${dbName} = _new_sqlite_db(${dbFilename});
@@ -25,15 +26,16 @@ top::Stmt ::= dbFilename::Expr dbName::Name tableList::SqliteTableList
         nilStorageClass(),
         nilAttribute(),
         abs:sqliteDbTypeExpr(tableList.tables),
-        foldDeclarator([
+        consDeclarator(
           declarator(
-            dbName,
+            @dbName,
             baseTypeExpr(),
             nilAttribute(),
-            justInitializer(exprInitializer(callNew)))
-        ])
+            justInitializer(exprInitializer(@callNew))),
+          nilDeclarator()
+        )
       )
     );
 
-  forwards to dbDecl;
+  forwards to @dbDecl;
 }

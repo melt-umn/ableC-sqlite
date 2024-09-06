@@ -16,10 +16,6 @@ top::Stmt ::= row::Name query::Expr body::Stmt
   ]);
   top.functionDefs := body.functionDefs;
   top.labelDefs := body.labelDefs;
-  body.env = addEnv(rowDecl.defs, top.env);
-  body.controlStmtContext = controlEnterLoop(top.controlStmtContext);
-  query.env = top.env;
-  query.controlStmtContext = top.controlStmtContext;
 
   local localErrors :: [Message] =
     case query.typerep of
@@ -49,14 +45,14 @@ top::Stmt ::= row::Name query::Expr body::Stmt
   local callReset :: Expr =
     directCallExpr(
       name("sqlite3_reset"),
-      foldExpr([memberExpr(query, true, name("query"))])
+      consExpr(memberExpr(@query, true, name("query")), nilExpr())
     );
 
   -- sqlite3_step(${query}.query)
   local callStep :: Expr =
     directCallExpr(
       name("sqlite3_step"),
-      foldExpr([memberExpr(query, true, name("query"))])
+      consExpr(memberExpr(^query, true, name("query")), nilExpr())
     );
 
   -- SQLITE_ROW
@@ -69,7 +65,7 @@ top::Stmt ::= row::Name query::Expr body::Stmt
 --    );
 
   -- sqlite3_step(${query}.query) == SQLITE_ROW
-  local hasRow :: Expr = equalsExpr(callStep, sqliteRow);
+  local hasRow :: Expr = equalsExpr(@callStep, @sqliteRow);
 
   -- for example: const unsigned char *name; int age;
   local columnDecls :: StructItemList = makeColumnDecls(columns);
@@ -81,7 +77,7 @@ top::Stmt ::= row::Name query::Expr body::Stmt
       structDecl(
         nilAttribute(),
         nothingName(),
-        columnDecls
+        @columnDecls
       )
     );
 
@@ -93,7 +89,7 @@ top::Stmt ::= row::Name query::Expr body::Stmt
     objectInitializer(
       makeRowInit(
         columns,
-        memberExpr(query, true, name("query"))
+        memberExpr(^query, true, name("query"))
       )
     );
   -- struct { <column declarations> } ${row} = { <column initializations> } ;
@@ -102,36 +98,35 @@ top::Stmt ::= row::Name query::Expr body::Stmt
       variableDecls(
         nilStorageClass(),
         nilAttribute(),
-        rowTypeExpr,
-        foldDeclarator([
+        @rowTypeExpr,
+        consDeclarator(
           declarator(
-            row,
+            @row,
             baseTypeExpr(),
             nilAttribute(),
-            justInitializer(rowInit)
-          )
-        ])
+            justInitializer(@rowInit)
+          ),
+          nilDeclarator()
+        )
       )
     );
-  rowDecl.env = top.env;
-  rowDecl.controlStmtContext = top.controlStmtContext;
 
   local whileHasRow :: Stmt =
     whileStmt(
-      mkErrorCheck(localErrors, hasRow),
-      foldStmt([
-        decStmt(rowDecl),
-        decStmt(body)
-      ])
+      mkErrorCheck(localErrors, @hasRow),
+      seqStmt(
+        @rowDecl,
+        @body
+      )
     );
 
   local fullStmt :: Stmt =
-    foldStmt([
-      exprStmt(callReset),
-      whileHasRow
-    ]);
+    seqStmt(
+      exprStmt(@callReset),
+      @whileHasRow
+    );
 
-  forwards to fullStmt;
+  forwards to @fullStmt;
 }
 
 function makeColumnDecls
@@ -166,9 +161,9 @@ StructItem ::= col::SqliteColumn
   return
       structItem(
         nilAttribute(),
-        typeExpr,
+        ^typeExpr,
         foldStructDeclarator([
-          structField(col.columnName, mod, nilAttribute())
+          structField(col.columnName, ^mod, nilAttribute())
         ])
       );
 }
@@ -176,7 +171,7 @@ StructItem ::= col::SqliteColumn
 function makeRowInit
 InitList ::= columns::[SqliteColumn] query::Expr
 {
-  return makeRowInitHelper(columns, query, 0);
+  return makeRowInitHelper(columns, ^query, 0);
 }
 
 function makeRowInitHelper
@@ -186,8 +181,8 @@ InitList ::= columns::[SqliteColumn] query::Expr colIndex::Integer
     if null(columns) then nilInit()
     else
       consInit(
-        makeColumnInit(head(columns), query, colIndex),
-        makeRowInitHelper(tail(columns), query, colIndex+1)
+        makeColumnInit(head(columns), ^query, colIndex),
+        makeRowInitHelper(tail(columns), ^query, colIndex+1)
       );
 }
 
@@ -206,7 +201,7 @@ Init ::= col::SqliteColumn query::Expr colIndex::Integer
         directCallExpr(
           name(f),
           foldExpr([
-            query,
+            ^query,
             mkIntConst(colIndex)
           ])
         )

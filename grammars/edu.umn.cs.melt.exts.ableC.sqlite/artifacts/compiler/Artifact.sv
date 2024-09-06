@@ -1,6 +1,6 @@
-grammar artifact;
+grammar edu:umn:cs:melt:exts:ableC:sqlite:artifacts:compiler;
 
-{- This Silver specification does little more than list the desired
+{- This Silver specification does litte more than list the desired
    extensions, albeit in a somewhat stylized way.
 
    Files like this can easily be generated automatically from a simple
@@ -10,13 +10,10 @@ grammar artifact;
 import edu:umn:cs:melt:ableC:concretesyntax as cst;
 import edu:umn:cs:melt:ableC:drivers:compile;
 
+
 parser extendedParser :: cst:Root {
   edu:umn:cs:melt:ableC:concretesyntax;
   edu:umn:cs:melt:exts:ableC:sqlite;
-}
+} 
 
-function main
-IOVal<Integer> ::= args::[String] io_in::IOToken
-{
-  return driver(args, io_in, extendedParser);
-}
+fun main IO<Integer> ::= args::[String] = driver(args, extendedParser);

@@ -4,7 +4,6 @@ imports edu:umn:cs:melt:exts:ableC:sqlite:abstractsyntax as abs;
 imports edu:umn:cs:melt:exts:ableC:sqlite:abstractsyntax:tables as tbls;
 import edu:umn:cs:melt:ableC:abstractsyntax:host;
 import edu:umn:cs:melt:ableC:abstractsyntax:env;
-import edu:umn:cs:melt:ableC:abstractsyntax:overloadable;
 
 abstract production sqliteDbTypeExpr
 top::BaseTypeExpr ::= tables::[tbls:SqliteTable]
@@ -24,7 +23,7 @@ top::Type ::= qs::Qualifiers tables::[tbls:SqliteTable]
   forwards to
     noncanonicalType(
       typedefType(
-        qs,
+        @qs,
         "_sqlite_db",
         pointerType(
           nilQualifier(),
@@ -59,7 +58,7 @@ top::Type ::= qs::Qualifiers columns::[abs:SqliteColumn]
   forwards to
     noncanonicalType(
       typedefType(
-        qs,
+        @qs,
         "_sqlite_query",
         pointerType(
           nilQualifier(),

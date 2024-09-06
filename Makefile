@@ -3,8 +3,8 @@
 # `make`: build the artifact and run all tests
 #
 # `make build`: build the artifact
-#
-# `make libs`: build any libraries packaged for use with the extension
+# 
+# `make libraries`: build the extension's libraries
 #
 # `make examples`: compile and run the example uses of the extension
 #
@@ -26,42 +26,32 @@
 #       e.g. `make -B analyses`, `make -B mwda`, etc.
 #
 
+EXT_NAME=ableC-lib-sqlite
+EXT_GRAMMAR=edu:umn:cs:melt:exts:ableC:sqlite
+LIB_NAME=sqlite3
+
+LDLIBS=-lpthread -ldl
+
+# Preserve comments in the preprocessed source, for testing purposes
+XCFLAGS=-CC
+
 # Path from current directory to top level ableC repository
 ABLEC_BASE?=../../ableC
-# Path from current directory to top level extensions directory
-EXTS_BASE?=../../extensions
 
-MAKEOVERRIDES=ABLEC_BASE=$(abspath $(ABLEC_BASE)) EXTS_BASE=$(abspath $(EXTS_BASE))
+include $(ABLEC_BASE)/extension.mk
 
-all: examples analyses test
+tests/positive/populate_tables.test tests/positive/populate_tables_random.test: | test.db
+tests/positive/join_person_details.test: tests/positive/populate_tables.test
+tests/positive/print_person_table.test: tests/positive/populate_tables_random.test
 
-build:
-	$(MAKE) -C examples ableC.jar
+bin/sqlite3: lib/libsqlite3.a
 
-libs:
-	$(MAKE) -C src
+test.db: bin/sqlite3
+	examples/create_database.sh
 
-examples:
-	$(MAKE) -C examples
+clean: clean_db
 
-analyses:
-	$(MAKE) -C modular_analyses
+clean_db:
+	rm -f test.db
 
-mda:
-	$(MAKE) -C modular_analyses mda
-
-mwda:
-	$(MAKE) -C modular_analyses mwda
-
-test:
-	$(MAKE) -C tests -k
-
-clean:
-	rm -f *~
-	$(MAKE) -C src clean
-	$(MAKE) -C examples clean
-	$(MAKE) -C modular_analyses clean
-	$(MAKE) -C tests clean
-
-.PHONY: all build libs examples analyses mda mwda test clean
-.NOTPARALLEL: # Avoid running multiple Silver builds in parallel
+.PHONY: clean_db

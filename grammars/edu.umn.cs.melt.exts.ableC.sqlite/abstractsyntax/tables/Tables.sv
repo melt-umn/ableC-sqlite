@@ -7,7 +7,7 @@ synthesized attribute tables :: [SqliteTable];
 abstract production sqliteConsTable
 top::SqliteTableList ::= t::SqliteTable ts::SqliteTableList
 {
-  top.tables = cons(t, ts.tables);
+  top.tables = cons(^t, ts.tables);
 }
 abstract production sqliteNilTable
 top::SqliteTableList ::=
@@ -21,7 +21,7 @@ synthesized attribute columns :: [SqliteColumn];
 abstract production sqliteTable
 top::SqliteTable ::= n::Name cs::SqliteColumnList
 {
-  top.tableName = n;
+  top.tableName = ^n;
   top.columns = cs.columns;
 }
 
@@ -34,7 +34,7 @@ top::SqliteColumnList ::= cs::[SqliteColumn]
 abstract production sqliteConsColumn
 top::SqliteColumnList ::= c::SqliteColumn cs::SqliteColumnList
 {
-  top.columns = cons(c, cs.columns);
+  top.columns = cons(^c, cs.columns);
 }
 abstract production sqliteNilColumn
 top::SqliteColumnList ::=
@@ -48,8 +48,8 @@ synthesized attribute typ :: SqliteColumnType;
 abstract production sqliteColumn
 top::SqliteColumn ::= n::Name t::SqliteColumnType
 {
-  top.columnName = n;
-  top.typ = t;
+  top.columnName = ^n;
+  top.typ = ^t;
 }
 
 tracked nonterminal SqliteResultColumnName;
@@ -116,23 +116,23 @@ function aliasTablesColumn
     end;
   local nextTableAliased :: SqliteTable =
     if doAliasNextTable
-    then aliasTableColumn(nextTable, n, a)
-    else nextTable;
+    then aliasTableColumn(^nextTable, ^n, ^a)
+    else @nextTable;
 
   return if null(tables) then []
          else
            cons(
-             nextTableAliased,
-             aliasTablesColumn(tail(tables), n, a, mTableName)
+             ^nextTableAliased,
+             aliasTablesColumn(tail(tables), ^n, ^a, mTableName)
            );
 }
 
 function aliasTableColumn
 SqliteTable ::= table::SqliteTable n::Name a::Name
 {
-  return case findColumn(n, table.columns) of
-           just(c)   -> addColumnToTable(table, a, c.typ)
-         | nothing() -> table
+  return case findColumn(^n, table.columns) of
+           just(c)   -> addColumnToTable(^table, ^a, c.typ)
+         | nothing() -> ^table
          end;
 }
 
@@ -142,14 +142,14 @@ Maybe<SqliteColumn> ::= colName::Name columns::[SqliteColumn]
   local col :: SqliteColumn = head(columns);
   return if null(columns) then nothing()
          else if colName.name == col.columnName.name
-              then just(col)
-              else findColumn(colName, tail(columns));
+              then just(^col)
+              else findColumn(^colName, tail(columns));
 }
 
 function addColumnToTable
 SqliteTable ::= table::SqliteTable n::Name t::SqliteColumnType
 {
-  local newColumn :: SqliteColumn = sqliteColumn(n, t);
-  return sqliteTable(table.tableName, sqliteColumnList(cons(newColumn, table.columns)));
+  local newColumn :: SqliteColumn = sqliteColumn(@n, @t);
+  return sqliteTable(table.tableName, sqliteColumnList(cons(^newColumn, table.columns)));
 }
 

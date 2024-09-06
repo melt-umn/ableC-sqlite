@@ -14,7 +14,7 @@ int main(void)
   } as db;
 
   on db query {
-    // person_id is ambiguous, this should be an error but is not
+    -- person_id is ambiguous, this should be an error but is not
     SELECT person_id
     FROM   person JOIN details
                     ON person.person_id = details.person_id
@@ -28,8 +28,8 @@ int main(void)
   finalize(person_ids);
 
   on db query {
-    // this will select person.person_id and details.person_id but the foreach
-    //  loop will have no way to disambiguate the two
+    -- this will select person.person_id and details.person_id but the foreach
+    --  loop will have no way to disambiguate the two
     SELECT *
     FROM   person JOIN details
                     ON person.person_id = details.person_id
