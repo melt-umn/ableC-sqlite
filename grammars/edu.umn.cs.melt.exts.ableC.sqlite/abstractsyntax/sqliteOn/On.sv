@@ -178,7 +178,7 @@ top::Stmt ::= exprParams::[Expr] queryName::Name i::Integer
            exprStmt(
              makeBind(head(exprParams), @queryName, i)
            ),
-           makeBindsHelper(tail(exprParams), @queryName, i+1)
+           makeBindsHelper(tail(exprParams), ^queryName, i+1)
          );
 }
 
