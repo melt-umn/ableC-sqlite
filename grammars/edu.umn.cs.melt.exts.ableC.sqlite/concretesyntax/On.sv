@@ -24,7 +24,7 @@ top::host_cnc:Expr_c ::= 'on' c::CommitBit_c
   top.ast = c.ast;
 }
 
-nonterminal QueryBit_c with ast<host_abs:Stmt>, location ;
+tracked nonterminal QueryBit_c with ast<host_abs:Stmt> ;
 
 concrete production sqliteQueryBitStmt_c
 top::QueryBit_c ::= '(' db::host_cnc:Expr_c ')' 'query' query::SqliteQueryBlock_c
@@ -38,24 +38,24 @@ top::QueryBit_c ::= id::host_cnc:Identifier_t 'query' query::SqliteQueryBlock_c
                     'as' queryName::host_cnc:Identifier_t
 {
   top.ast = abs:sqliteQueryDb(
-              host_abs:declRefExpr(host_abs:fromId(id), location=top.location),
+              host_abs:declRefExpr(host_abs:fromId(id)),
 	      query.ast, host_abs:fromId(queryName));
 }
 
-nonterminal CommitBit_c with ast<host_abs:Expr>, location ;
+tracked nonterminal CommitBit_c with ast<host_abs:Expr> ;
 
 concrete production sqliteCommitBitExpr_c
 top::CommitBit_c ::= '(' db::host_cnc:Expr_c ')' 'commit' query::SqliteQueryBlock_c
 {
-  top.ast = abs:sqliteCommitDb(db.ast, query.ast, location=top.location);
+  top.ast = abs:sqliteCommitDb(db.ast, query.ast);
 }
 
 concrete production sqliteCommitBitVar_c
 top::CommitBit_c ::= id::host_cnc:Identifier_t 'commit' query::SqliteQueryBlock_c
 {
   top.ast = abs:sqliteCommitDb(
-              host_abs:declRefExpr(host_abs:fromId(id), location=top.location),
-              query.ast, location=top.location);
+              host_abs:declRefExpr(host_abs:fromId(id)),
+              query.ast);
 }
 
 

@@ -22,7 +22,7 @@ top::host_cnc:Stmt_c ::= 'use' u::UseBit_c
   top.ast = u.ast;
 }
 
-nonterminal UseBit_c with ast<host_abs:Stmt>, location;
+tracked nonterminal UseBit_c with ast<host_abs:Stmt>;
 
 concrete production useBitExpr_c
 top::UseBit_c ::= '(' dbFilename::host_cnc:Expr_c ')' tables::SqliteOptWithTables_c
@@ -36,7 +36,7 @@ top::UseBit_c ::= id::host_cnc:Identifier_t tables::SqliteOptWithTables_c
                     'as' dbName::host_cnc:Identifier_t
 {
   top.ast = abs:sqliteUse(
-              host_abs:declRefExpr(host_abs:fromId(id), location=top.location),
+              host_abs:declRefExpr(host_abs:fromId(id)),
               host_abs:fromId(dbName), tables.ast);
 }
 
@@ -45,11 +45,11 @@ top::UseBit_c ::= sl::host_cnc:StringConstant_t tables::SqliteOptWithTables_c
                     'as' dbName::host_cnc:Identifier_t
 {
   top.ast = abs:sqliteUse(
-              host_abs:stringLiteral(sl.lexeme, location=top.location),
+              host_abs:stringLiteral(sl.lexeme),
               host_abs:fromId(dbName), tables.ast);
 }
 
-nonterminal SqliteOptWithTables_c with ast<abs:SqliteTableList>, location;
+tracked nonterminal SqliteOptWithTables_c with ast<abs:SqliteTableList>;
 concrete productions top::SqliteOptWithTables_c
 | 'with' '{' t::SqliteTableList_c '}'
   layout {SqliteLineComment_t, host_cnc:BlockComment_t, host_cnc:Spaces_t, host_cnc:NewLine_t}
@@ -61,7 +61,7 @@ concrete productions top::SqliteOptWithTables_c
     top.ast = abs:sqliteNilTable();
   }
 
-nonterminal SqliteTableList_c with ast<abs:SqliteTableList>, location;
+tracked nonterminal SqliteTableList_c with ast<abs:SqliteTableList>;
 concrete productions top::SqliteTableList_c
 | ts::SqliteTableList_c ',' t::SqliteTable_c
   {
@@ -72,14 +72,14 @@ concrete productions top::SqliteTableList_c
     top.ast = abs:sqliteConsTable(t.ast, abs:sqliteNilTable());
   }
 
-nonterminal SqliteTable_c with ast<abs:SqliteTable>, location;
+tracked nonterminal SqliteTable_c with ast<abs:SqliteTable>;
 concrete productions top::SqliteTable_c
 | 'table' n::host_cnc:Identifier_t '(' cs::SqliteColumnList_c ')'
   {
     top.ast = abs:sqliteTable(host_abs:fromId(n), cs.ast);
   }
 
-nonterminal SqliteColumnList_c with ast<abs:SqliteColumnList>, location;
+tracked nonterminal SqliteColumnList_c with ast<abs:SqliteColumnList>;
 concrete productions top::SqliteColumnList_c
 | cs::SqliteColumnList_c ',' c::SqliteColumn_c
   {
@@ -94,14 +94,14 @@ concrete productions top::SqliteColumnList_c
     top.ast = abs:sqliteNilColumn();
   }
 
-nonterminal SqliteColumn_c with ast<abs:SqliteColumn>, location;
+tracked nonterminal SqliteColumn_c with ast<abs:SqliteColumn>;
 concrete productions top::SqliteColumn_c
 | n::host_cnc:Identifier_t t::SqliteColumnType_c
   {
     top.ast = abs:sqliteColumn(host_abs:fromId(n), t.ast);
   }
 
-nonterminal SqliteColumnType_c with ast<abs:SqliteColumnType>, location;
+tracked nonterminal SqliteColumnType_c with ast<abs:SqliteColumnType>;
 concrete productions top::SqliteColumnType_c
 | 'VARCHAR'
   {

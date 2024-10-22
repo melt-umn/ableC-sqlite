@@ -2,7 +2,7 @@ grammar edu:umn:cs:melt:exts:ableC:sqlite:abstractsyntax:tables;
 
 imports edu:umn:cs:melt:ableC:abstractsyntax:host;
 
-nonterminal SqliteTableList with tables;
+tracked nonterminal SqliteTableList with tables;
 synthesized attribute tables :: [SqliteTable];
 abstract production sqliteConsTable
 top::SqliteTableList ::= t::SqliteTable ts::SqliteTableList
@@ -15,7 +15,7 @@ top::SqliteTableList ::=
   top.tables = nil();
 }
 
-nonterminal SqliteTable with tableName, columns;
+tracked nonterminal SqliteTable with tableName, columns;
 synthesized attribute tableName :: Name;
 synthesized attribute columns :: [SqliteColumn];
 abstract production sqliteTable
@@ -25,7 +25,7 @@ top::SqliteTable ::= n::Name cs::SqliteColumnList
   top.columns = cs.columns;
 }
 
-nonterminal SqliteColumnList with columns;
+tracked nonterminal SqliteColumnList with columns;
 abstract production sqliteColumnList
 top::SqliteColumnList ::= cs::[SqliteColumn]
 {
@@ -42,7 +42,7 @@ top::SqliteColumnList ::=
   top.columns = nil();
 }
 
-nonterminal SqliteColumn with columnName, typ;
+tracked nonterminal SqliteColumn with columnName, typ;
 synthesized attribute columnName :: Name;
 synthesized attribute typ :: SqliteColumnType;
 abstract production sqliteColumn
@@ -52,7 +52,7 @@ top::SqliteColumn ::= n::Name t::SqliteColumnType
   top.typ = t;
 }
 
-nonterminal SqliteResultColumnName;
+tracked nonterminal SqliteResultColumnName;
 abstract production sqliteResultColumnName
 top::SqliteResultColumnName ::= mName::Maybe<Name> mAlias::Maybe<Name> mTableName::Maybe<Name>
 {
@@ -66,7 +66,7 @@ top::SqliteResultColumnName ::= tableName::Name
 {
 }
 
-nonterminal SqliteColumnType;
+tracked nonterminal SqliteColumnType;
 
 abstract production sqliteVarchar
 top::SqliteColumnType ::=
